@@ -1,24 +1,137 @@
-table.tasks {
+table#tasklist, table#projectlist {
   border-top: 1px solid;
   border-spacing: 0;
   border-collapse: collapse;
+  width: 100%;
+  margin: 1em 0;
 }
 
-table.tasks td, table.tasks th {
-  border: 1px solid #999;
+table#tasklist td, table#tasklist th,
+table#projectlist td, table#projectlist th {
+  border: 1px solid #8898BF;
+  padding: 0.1em;
 }
 
-td.priority1 {
+td.priority, th.priority {
+  width: 5em;
+  text-align: center;
+  white-space: nowrap;
+}
+
+td.actions, th.actions {
+  width: 1em;
+  white-space: nowrap;
+}
+
+.priority1 {
   background: #CD0000;
 }
 
-td.priority2 {
+.priority2 {
   background: #EE7600;
 }
 
-table.projects {
-  border: 1px solid #999;
-  border-spacing: 0;
-  border-collapse: collapse;
+.priority3 {
+  background: #FF7600;
 }
 
+.priority4 {
+  background: #FF7600;
+}
+
+.priority5 {
+  background: #FF7600;
+}
+
+.priority100 {
+  background: #00FF00 !important;
+}
+
+tr.project {
+  cursor: pointer;
+}
+
+.task .progress {
+  border: 1px solid #000;
+  background: #F00;
+  text-align: center;
+  padding: 0 1px;
+}
+
+table#projectlist tr.project th {
+  padding: 0.5em;
+}
+
+table#projectlist tr.project .title {
+  font-size: 13pt;
+  text-align: left;
+}
+
+tr.project .title a,
+tr.project .title a:active,
+tr.project .title a:hover,
+tr.project .title a:visited {
+  color: #000;
+}
+
+table#tasklist th, table#projectlist th {
+  background: #EEE;
+  font-weight: bold;
+  font-size: 10pt;
+}
+
+table#projectlist tr.project th {
+  background: #D8E8FF;
+}
+
+table#projectlist tr.project:hover th,
+table#projectlist tr.project.selected th {
+  background: #84AAF0;
+}
+
+table#projectlist tr:hover,
+table#tasklist tr:hover {
+  background: #FFAAAA;
+}
+
+table#projectlist tr.task {
+  display: none;
+}
+
+.taskmenu {
+  list-style: none;
+  margin: 0;
+  display: block;
+  clear: both;
+}
+
+.taskmenu li {
+  float: left;
+  border: 1px solid #8898BF;
+  margin-right: 0.2em;
+}
+
+.taskmenu a,
+.taskmenu a:active,
+.taskmenu a:visited,
+.taskmenu a:hover {
+  display: block;
+  padding: 0.2em 0.4em;
+  color: #000;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.taskmenu a:active,
+.taskmenu a:hover {
+  color: #000;
+  background: #84AAF0;
+}
+
+.taskform {
+  clear: both;
+}
+
+.taskform label {
+  font-weight: bold;
+}

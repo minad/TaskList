@@ -17,7 +17,7 @@ require($dir . 'TaskList.class.php');
 
 $wgExtensionFunctions[] = 'efTaskList';
 
-$wgShowExceptionDetails = true; 
+$wgShowExceptionDetails = true;
 
 $wgNamespacesWithSubpages[NS_TASKS] = true;
 $wgContentNamespaces[] = NS_TASKS;
