@@ -1,6 +1,11 @@
 function taskListCollapse(element) {
     collapsed = element.collapsed = !element.collapsed;
-    element.setAttribute('class', collapsed ? 'project' : 'project selected');
+    clazz = element.getAttribute('class');
+    if (collapsed)
+	clazz = clazz.replace(/\s*selected\s*/, '');
+    else
+	clazz += ' selected';
+    element.setAttribute('class', clazz);
     element = element.nextSibling;
     while (element) {
 	if (element.nodeType == 1 && element.nodeName == 'TR') {

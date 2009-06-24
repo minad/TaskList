@@ -94,7 +94,7 @@ class TaskList {
 			$user = '<a href="'.$userUrl.'">'.htmlspecialchars($task['user']).'</a>';
 		}
 
-		return '<tr class="task"><td class="priority priority'.$task['priority'].'">'.$task['priority'].'</td><td><a href="'.$url.'">'.
+		return '<tr class="task priority'.$task['priority'].'"><td class="priority">'.$task['priority'].'</td><td><a href="'.$url.'">'.
 			htmlspecialchars($task['name']).'</a></td><td>'.htmlspecialchars(self::truncate($task['description'])).'</td><td>'.htmlspecialchars($task['date']).
 			'</td><td>'.$user.'</td><td>'.htmlspecialchars(self::truncate($task['status'])).
 			'</td><td><div class="progress" style="width: '.$task['progress'].
@@ -129,7 +129,7 @@ class TaskList {
 			}
 
 			$newTaskUrl = Title::makeTitle(NS_SPECIAL, wfMsg('newtask').'/'.$projectName)->getLocalURL();
-			$text .= '<tr class="project"><th class="priority priority'.$projectPriority.'"></th><th colspan="8"><span class="title"><a href="'.$projectUrl.'">'.
+			$text .= '<tr class="project priority'.$projectPriority.'"><th class="priority"></th><th colspan="8"><span class="title"><a href="'.$projectUrl.'">'.
 				htmlspecialchars($projectName).'</a></span> <span class="count">'. count($tasks).' '.wfMsg('tasklist-task/s').'</span></th></tr>' .
 				self::taskHeader($newTaskUrl);
 
