@@ -101,8 +101,8 @@ class TaskList {
 		}
 
 		return '<tr class="task priority'.$task['priority'].'"><td class="priority">'.$task['priority'].'</td><td><a href="'.$url.'">'.
-			htmlspecialchars($task['name']).'</a></td><td>'.htmlspecialchars(self::truncate($task['description'])).'</td><td>'.htmlspecialchars($task['date']).
-			'</td><td>'.$user.'</td><td>'.htmlspecialchars(self::truncate($task['status'])).
+			htmlspecialchars($task['name']).'</a></td><td>'.htmlspecialchars(self::truncate($task['description'])).'</td><td>'.
+			htmlspecialchars($task['date']).'</td><td>'.$user.'</td><td>'.htmlspecialchars(self::truncate($task['status'])).
 			'</td><td><div class="progress" style="width: '.$task['progress'].
 			'%">'.$task['progress'].'%</div></td><td class="actions"><a href="'.$deleteURL.'">'.
 			self::img('delete').'</a><a href="'.$editURL.'">'.self::img('edit').'</a></td></tr>';
@@ -115,9 +115,16 @@ class TaskList {
 			'</th><th class="unsortable"><a href="'.$newTaskUrl.'">'.self::img('add').'</a></th></tr>';
 	}
 
-	private static function allTasks() {
-		global $wgExtraNamespaces;
+	private static function projectPriority($tasks) {
+		$prio = 100;
+		foreach ($tasks as $task) {
+			if ($task['priority'] < $prio)
+				$prio = $task['priority'];
+		}
+		return $prio;
+	}
 
+	private static function allTasks() {
 		$projects = self::getProjects();
 
 		$newProjectUrl = Title::makeTitle(NS_SPECIAL, wfMsg('newproject'))->getLocalUrl();
@@ -129,21 +136,16 @@ class TaskList {
 			return $text;
 		}
 
-		$text .= '<table id="projectlist">';
+		$text .= '<table class="projectlist" id="projectlist">';
 
 		foreach ($projects as $projectName => $tasks) {
 			$projectUrl = Title::makeTitle(NS_TASKS, $projectName)->getLocalUrl();
 
-			$projectPriority = 100;
-			foreach ($tasks as $task) {
-				if ($task['priority'] < $projectPriority)
-					$projectPriority = $task['priority'];
-			}
-
 			$newTaskUrl = Title::makeTitle(NS_SPECIAL, wfMsg('newtask').'/'.$projectName)->getLocalUrl();
-			$text .= '<tr class="project priority'.$projectPriority.'"><th class="priority"></th><th colspan="8"><span class="title"><a href="'.$projectUrl.'">'.
-				htmlspecialchars($projectName).'</a></span> <span class="count">'. count($tasks).' '.wfMsg('tasklist-task/s').'</span></th></tr>' .
-				self::taskHeader($newTaskUrl);
+			$text .= '<tr class="project priority'.self::projectPriority($tasks).
+				'"><th class="priority"></th><th colspan="8"><span class="title"><a href="'.$projectUrl.'">'.
+				htmlspecialchars($projectName).'</a></span> <span class="count">'. count($tasks).' '.
+				wfMsg('tasklist-task/s').'</span></th></tr>'.self::taskHeader($newTaskUrl);
 
 			if (empty($tasks)) {
 				$text .= '<tr class="task"><td colspan="8">'.wfMsg('tasklist-no-tasks').'</td></tr>';
@@ -159,16 +161,39 @@ class TaskList {
 		return $text;
 	}
 
+	public static function projectOverview() {
+		$projects = self::getProjects();
+
+		if (empty($projects))
+			return '<p>' . wfMsg('tasklist-no-projects') . '</p>';
+
+		$text .= '<table class="projectlist">';
+
+		foreach ($projects as $projectName => $tasks) {
+			$projectUrl = Title::makeTitle(NS_TASKS, $projectName)->getLocalUrl();
+
+			$text .= '<tr class="project priority'.self::projectPriority($tasks).
+				'"><th class="priority"></th><th colspan="8"><span class="title"><a href="'.
+				$projectUrl.'">'.htmlspecialchars($projectName).'</a></span> <span class="count">'.
+				count($tasks).' '.wfMsg('tasklist-task/s').'</span></th></tr>';
+		}
+
+		$text .= '</table>';
+
+		return $text;
+	}
+
 	public static function projectTasks() {
-		global $wgTitle, $wgExtraNamespaces;
+		global $wgTitle;
 		$projectName = $wgTitle->getText();
 		$tasks = self::getTasks($wgTitle);
 
 		$overviewUrl = Title::makeTitle(NS_TASKS, wfMsg('tasklist-overview'))->getLocalUrl();
 		$newTaskUrl = Title::makeTitle(NS_SPECIAL, wfMsg('newtask').'/'.$projectName)->getLocalUrl();
 
-		$text = '<ul class="taskmenu"><li><a href="'.$overviewUrl.'">'.wfMsg('tasklist-overview').'</a></li><li><a href="'.$newTaskUrl.'">'.wfMsg('newtask').
-			'</a></li></ul><table id="tasklist" class="sortable">' . self::taskHeader($newTaskUrl);
+		$text = '<ul class="taskmenu"><li><a href="'.$overviewUrl.'">'.wfMsg('tasklist-overview').
+			'</a></li><li><a href="'.$newTaskUrl.'">'.wfMsg('newtask').
+			'</a></li></ul><table class="tasklist sortable">' . self::taskHeader($newTaskUrl);
 
 		if (empty($tasks)) {
 			$text .= '<tr class="task"><td colspan="8">'.wfMsg('tasklist-no-tasks').'</td></tr>';
@@ -182,17 +207,10 @@ class TaskList {
 		return $text;
 	}
 
-	public static function addStyle() {
-		global $wgOut, $wgScriptPath, $wgTaskListPath;
-		$wgOut->addLink(array('rel' => 'stylesheet', 'type' => 'text/css', 'href' => "$wgScriptPath$wgTaskListPath/tasklist.css"));
-	}
-
 	public static function headerHook(&$article, &$outputDone, &$pcache) {
 		global $wgOut, $wgTitle, $wgScriptPath, $wgJsMimeType, $wgTaskListPath;
-		if ($wgTitle->getNamespace() == NS_TASKS) {
-			self::addStyle();
-			$wgOut->addScript("<script type=\"$wgJsMimeType\" src=\"$wgScriptPath$wgTaskListPath/tasklist.js\"></script>\n");
-		}
+		$wgOut->addLink(array('rel' => 'stylesheet', 'type' => 'text/css', 'href' => "$wgScriptPath$wgTaskListPath/tasklist.css"));
+		$wgOut->addScript("<script type=\"$wgJsMimeType\" src=\"$wgScriptPath$wgTaskListPath/tasklist.js\"></script>\n");
 		return true;
 	}
 
@@ -201,7 +219,7 @@ class TaskList {
 
 		global $wgTitle;
 		if ($wgTitle->getNamespace() != NS_TASKS || $wgTitle->isSubpage())
-			return '';
+			return self::projectOverview();
 
 		if ($wgTitle->getText() == wfMsg('tasklist-overview'))
 			return self::allTasks();
@@ -247,24 +265,26 @@ class TaskList {
 			} else {
 				if ($wgRequest->wasPosted()) {
 					if ($wgRequest->getCheck('wpDiff')) {
-						$wgOut->addHTML('<div style="border: 2px solid #A00; padding: 8px; margin: 8px;">' . $editpage->showDiff() . '</div>');
+						$wgOut->addHTML('<div class="preview-box">'.$editpage->showDiff().'</div>');
 					} else {
 						$parserOptions = ParserOptions::newFromUser($wgUser);
 						$parserOptions->setEditSection(false);
 						$parserOptions->setTidy(true);
 						$parserOutput = $wgParser->parse($editpage->textbox1, $title, $parserOptions);
-						$wgOut->addHTML('<div style="border: 2px solid #A00; padding: 8px; margin: 8px;">' . $parserOutput->getText() . '</div>');
+						$wgOut->addHTML('<div style="preview-box">'.$parserOutput->getText().'</div>');
 					}
 				}
 
 				$wgOut->addHTML('<form class="taskform" method="post" action="' . $title->escapeLocalURL("action=submit") .
 						'"><table><tr><td><label for="priority">' .
-						wfMsg('tasklist-priority').':</label></td><td><select id="priority" name="priority" size="1">'.self::optionList(1, 5, 1, $task['priority']).
+						wfMsg('tasklist-priority').':</label></td><td><select id="priority" name="priority" size="1">'.
+						self::optionList(1, 5, 1, $task['priority']).
 						'</select></td></tr><tr><td><label for="user">'
 						.wfMsg('tasklist-user').':</label></td><td><input id="user" name="user" type="text" size="20" value="'.
 						htmlspecialchars($task['user']).'"/></td></tr><tr><td><label for="description">'.wfMsg('tasklist-description').
-						':</label></td><td><input id="description" name="description" type="text" size="40" value="'.htmlspecialchars($task['description']).
-						'"/></td></tr><tr><td><label for="date">'.wfMsg('tasklist-date').':</label></td><td><input id="date" name="date" type="text" size="10" value="'.
+						':</label></td><td><input id="description" name="description" type="text" size="40" value="'.
+						htmlspecialchars($task['description']).'"/></td></tr><tr><td><label for="date">'.wfMsg('tasklist-date').
+						':</label></td><td><input id="date" name="date" type="text" size="10" value="'.
 						htmlspecialchars($task['date']).'"/></td></tr><tr><td><label for="status">'.wfMsg('tasklist-status').
 						':</label></td><td><input id="status" name="status" type="text" size="40" value="' . htmlspecialchars($task['status']) .
 						'"/></td></tr><tr><td><label for="progress">'.wfMsg('tasklist-progress').
@@ -301,8 +321,6 @@ class NewProject extends SpecialPage {
 			$article = new Article($title);
 			$article->insertNewArticle('<tasks/>', '', false, false, false, '');
 		} else {
-			TaskList::addStyle();
-
 			$wgOut->setPageTitle(wfMsg('newproject'));
 
 			$overviewUrl = Title::makeTitle(NS_TASKS, wfMsg('tasklist-overview'))->getLocalUrl();
@@ -341,24 +359,28 @@ class NewTask extends SpecialPage {
 			$article = new Article($title);
 			$article->insertNewArticle(TaskList::formatTask($task), '', false, false, false, '');
 		} else {
-			TaskList::addStyle();
-
 			$wgOut->setPageTitle(wfMsg('newtask'));
 
 			$overviewUrl = Title::makeTitle(NS_TASKS, wfMsg('tasklist-overview'))->getLocalUrl();
 
 			$wgOut->addHTML('<ul class="taskmenu"><li><a href="'.$overviewUrl.'">'.wfMsg('tasklist-overview').'</a></li></ul>'.
 					'<form class="taskform" method="post" action="' . $this->getTitle()->escapeLocalURL() . '"><table><tr><td><label for="project">'.
-					wfMsg('tasklist-project').':</label></td><td><input id="project" name="project" type="text" size="20" value="'.htmlspecialchars($project).
-					'"/></td></tr><tr><td><label for="name">'.wfMsg('tasklist-name').':</label></td><td><input id="name" name="name" type="text" size="20" value="'.
+					wfMsg('tasklist-project').':</label></td><td><input id="project" name="project" type="text" size="20" value="'.
+					htmlspecialchars($project).'"/></td></tr><tr><td><label for="name">'.wfMsg('tasklist-name').
+					':</label></td><td><input id="name" name="name" type="text" size="20" value="'.
 					htmlspecialchars($name).'"/></td></tr><tr><td><label for="priority">'.wfMsg('tasklist-priority').':</label></td><td>'.
-					'<select id="priority" name="priority" size="1">'.TaskList::optionList(1,5).'</select></td></tr><tr><td><label for="user">'.wfMsg('tasklist-user').
-					':</label></td><td><input id="user" name="user" type="text" size="20"/></td></tr><tr><td><label for="description">'.wfMsg('tasklist-description').
-					':</label></td><td><input id="description" name="description" type="text" size="40"/></td></tr><tr><td><label for="date">'.wfMsg('tasklist-date').
+					'<select id="priority" name="priority" size="1">'.TaskList::optionList(1,5).'</select></td></tr><tr><td><label for="user">'.
+					wfMsg('tasklist-user').
+					':</label></td><td><input id="user" name="user" type="text" size="20"/></td></tr><tr><td><label for="description">'.
+					wfMsg('tasklist-description').
+					':</label></td><td><input id="description" name="description" type="text" size="40"/></td></tr><tr><td><label for="date">'.
+					wfMsg('tasklist-date').
 					':</label></td><td><input id="date" name="date" type="text" size="10" value="'.date('d.m.y').
 					'"/></td></tr><tr><td><label for="status">'.wfMsg('tasklist-status').
-					':</label></td><td><input id="status" name="status" type="text" size="40"/></td></tr><tr><td><label for="progress">'.wfMsg('tasklist-progress').
-					':</label></td><td><select id="progress" name="progress" size="1">'.TaskList::optionList(0,100,10).'</select></td></tr><tr><td colspan="2">'.
+					':</label></td><td><input id="status" name="status" type="text" size="40"/></td></tr><tr><td><label for="progress">'.
+					wfMsg('tasklist-progress').
+					':</label></td><td><select id="progress" name="progress" size="1">'.
+					TaskList::optionList(0,100,10).'</select></td></tr><tr><td colspan="2">'.
 					'<input id="wpSave" name="wpSave" type="submit" value="' . wfMsg('savearticle') . '"/></table></form>');
 		}
 	}

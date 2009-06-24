@@ -1,4 +1,4 @@
-table#tasklist, table#projectlist {
+table.tasklist, table.projectlist {
   border-top: 1px solid;
   border-spacing: 0;
   border-collapse: collapse;
@@ -6,8 +6,8 @@ table#tasklist, table#projectlist {
   margin: 1em 0;
 }
 
-table#tasklist td, table#tasklist th,
-table#projectlist td, table#projectlist th {
+table.tasklist td, table.tasklist th,
+table.projectlist td, table.projectlist th {
   border: 1px solid #8898BF;
   padding: 0.1em;
 }
@@ -19,12 +19,12 @@ table#projectlist td, table#projectlist th {
   padding: 0 1px;
 }
 
-table#projectlist tr.project th {
+table.projectlist tr.project th {
   padding: 0.5em;
   text-align: left;
 }
 
-table#projectlist tr.project .title {
+table.projectlist tr.project .title {
   font-size: 13pt;
   float: left;
 }
@@ -44,26 +44,26 @@ tr.project {
   cursor: pointer;
 }
 
-table#tasklist th, table#projectlist th {
+table.tasklist th, table.projectlist th {
   background: #EEE;
   font-weight: bold;
   font-size: 10pt;
 }
 
-table#projectlist tr.project th {
+table.projectlist tr.project th {
   background: #D8E8FF;
 }
 
-table#projectlist tr.project:hover th,
-table#projectlist tr.project.selected th {
+table.projectlist tr.project:hover th,
+table.projectlist tr.project.selected th {
   background: #84AAF0;
 }
 
-table#projectlist tr.task, table#projectlist tr.placeholder {
+table.projectlist tr.task, table.projectlist tr.placeholder {
   display: none;
 }
 
-table#projectlist tr.placeholder td {
+table.projectlist tr.placeholder td {
   background: #FFF !important;
   height: 2em;
   padding: 0;
@@ -160,4 +160,10 @@ td.actions, th.actions {
 
 .taskform label {
   font-weight: bold;
+}
+
+.preview-box {
+  border: 2px solid #A00;
+  padding: 8px;
+  margin: 8px;
 }
