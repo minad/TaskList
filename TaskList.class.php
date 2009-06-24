@@ -84,9 +84,9 @@ class TaskList {
 
 	private static function taskRow($projectName, $task) {
 		$title = Title::makeTitle(NS_TASKS, $projectName.'/'.$task['name']);
-		$url = $title->getLocalURL();
-		$deleteURL = $title->getLocalURL('action=delete');
-		$editURL = $title->getLocalURL('action=edit');
+		$url = $title->getLocalUrl();
+		$deleteURL = $title->getLocalUrl('action=delete');
+		$editURL = $title->getLocalUrl('action=edit');
 
 		$user = '';
 		if ($task['user']) {
@@ -114,7 +114,7 @@ class TaskList {
 
 		$projects = self::getProjects();
 
-		$newProjectUrl = Title::makeTitle(NS_SPECIAL, wfMsg('newproject'))->getLocalURL();
+		$newProjectUrl = Title::makeTitle(NS_SPECIAL, wfMsg('newproject'))->getLocalUrl();
 
 		$text = '<ul class="taskmenu"></li><li><a href="'.$newProjectUrl.'">'.wfMsg('newproject'). '</a></li></ul>';
 
@@ -126,7 +126,7 @@ class TaskList {
 		$text .= '<table id="projectlist">';
 
 		foreach ($projects as $projectName => $tasks) {
-			$projectUrl = Title::makeTitle(NS_TASKS, $projectName)->getLocalURL();
+			$projectUrl = Title::makeTitle(NS_TASKS, $projectName)->getLocalUrl();
 
 			$projectPriority = 100;
 			foreach ($tasks as $task) {
@@ -134,7 +134,7 @@ class TaskList {
 					$projectPriority = $task['priority'];
 			}
 
-			$newTaskUrl = Title::makeTitle(NS_SPECIAL, wfMsg('newtask').'/'.$projectName)->getLocalURL();
+			$newTaskUrl = Title::makeTitle(NS_SPECIAL, wfMsg('newtask').'/'.$projectName)->getLocalUrl();
 			$text .= '<tr class="project priority'.$projectPriority.'"><th class="priority"></th><th colspan="8"><span class="title"><a href="'.$projectUrl.'">'.
 				htmlspecialchars($projectName).'</a></span> <span class="count">'. count($tasks).' '.wfMsg('tasklist-task/s').'</span></th></tr>' .
 				self::taskHeader($newTaskUrl);
@@ -158,8 +158,8 @@ class TaskList {
 		$projectName = $wgTitle->getText();
 		$tasks = self::getTasks($wgTitle);
 
-		$overviewUrl = Title::makeTitle(NS_TASKS, wfMsg('tasklist-overview'))->getLocalURL();
-		$newTaskUrl = Title::makeTitle(NS_SPECIAL, wfMsg('newtask').'/'.$projectName)->getLocalURL();
+		$overviewUrl = Title::makeTitle(NS_TASKS, wfMsg('tasklist-overview'))->getLocalUrl();
+		$newTaskUrl = Title::makeTitle(NS_SPECIAL, wfMsg('newtask').'/'.$projectName)->getLocalUrl();
 
 		$text = '<ul class="taskmenu"><li><a href="'.$overviewUrl.'">'.wfMsg('tasklist-overview').'</a></li><li><a href="'.$newTaskUrl.'">'.wfMsg('newtask').
 			'</a></li></ul><table id="tasklist" class="sortable">' . self::taskHeader($newTaskUrl);
@@ -291,15 +291,15 @@ class NewProject extends SpecialPage {
 		global $wgRequest, $wgOut;
 
 		$project = $wgRequest->getText('project');
-		if ($wgRequest->wasPosted() && $project) {
-			$article = new Article(Title::makeTitle(NS_TASKS, ucwords(trim($project))));
+		if ($wgRequest->wasPosted() && $project && $title = Title::makeTitleSafe(NS_TASKS, ucwords(trim($project)))) {
+			$article = new Article($title);
 			$article->insertNewArticle('<tasks/>', '', false, false, false, '');
 		} else {
 			TaskList::addStyle();
 
 			$wgOut->setPageTitle(wfMsg('newproject'));
 
-			$overviewUrl = Title::makeTitle(NS_TASKS, wfMsg('tasklist-overview'))->getLocalURL();
+			$overviewUrl = Title::makeTitle(NS_TASKS, wfMsg('tasklist-overview'))->getLocalUrl();
 
 			$wgOut->addHTML('<ul class="taskmenu"><li><a href="'.$overviewUrl.'">'.wfMsg('tasklist-overview').'</a></li></ul>'.
 					'<form class="taskform" method="post" action="' . $this->getTitle()->escapeLocalURL() .
@@ -324,21 +324,22 @@ class NewTask extends SpecialPage {
 		if (!$project)
 			$project = $par;
 
-		if ($wgRequest->wasPosted() && $project && $name) {
+		if ($wgRequest->wasPosted() && $project && $name &&
+		    $title = Title::makeTitleSafe(NS_TASKS, ucwords(trim($project)) . '/' . ucwords(trim($name)))) {
 			$task = array(priority    => intval($wgRequest->getText('priority')),
 				      user        => ucwords(trim($wgRequest->getText('user'))),
 				      description => $wgRequest->getText('description'),
 				      date        => $wgRequest->getText('date'),
 				      status      => $wgRequest->getText('status'),
 				      progress    => intval($wgRequest->getText('progress')));
-			$article = new Article(Title::makeTitle(NS_TASKS, ucwords(trim($project)) . '/' . ucwords(trim($name))));
+			$article = new Article($title);
 			$article->insertNewArticle(TaskList::formatTask($task), '', false, false, false, '');
 		} else {
 			TaskList::addStyle();
 
 			$wgOut->setPageTitle(wfMsg('newtask'));
 
-			$overviewUrl = Title::makeTitle(NS_TASKS, wfMsg('tasklist-overview'))->getLocalURL();
+			$overviewUrl = Title::makeTitle(NS_TASKS, wfMsg('tasklist-overview'))->getLocalUrl();
 
 			$wgOut->addHTML('<ul class="taskmenu"><li><a href="'.$overviewUrl.'">'.wfMsg('tasklist-overview').'</a></li></ul>'.
 					'<form class="taskform" method="post" action="' . $this->getTitle()->escapeLocalURL() . '"><table><tr><td><label for="project">'.
