@@ -39,6 +39,6 @@ function efTaskList() {
 	wfLoadExtensionMessages('TaskList');
 
 	$wgHooks['ParserFirstCallInit'][] = 'TaskList::init';
-	$wgHooks['ArticleViewHeader'][] = 'TaskList::headerHook';
+	$wgHooks['BeforePageDisplay'][] = 'TaskList::headerHook';
 	$wgHooks['AlternateEdit'][] = 'TaskList::editHook';
 }
