@@ -380,7 +380,7 @@ class NewTask extends SpecialPage {
 					wfMsg('tlProgress'). ':</label></td><td><select id="tlProgress" name="tlProgress" size="1">'.
 					TaskList::optionList(0,100,10,0,'%').'</select></td></tr><tr><td><label for="tlDescription">'.
 					wfMsg('tlDescription').':</label></td><td><textarea id="tlDescription" name="tlDescription" cols="60" rows="15">'.
-					'</texarea></td></tr><tr><td colspan="2">'.'<input id="wpSave" name="wpSave" type="submit" value="'
+					'</textarea></td></tr><tr><td colspan="2">'.'<input id="wpSave" name="wpSave" type="submit" value="'
 					. wfMsg('savearticle') . '"/></table></form>');
 		}
 	}
