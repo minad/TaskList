@@ -28,12 +28,32 @@ class TaskList {
 		return $projects;
 	}
 
+	private static function parseTask($content) {
+		preg_match('/{{Task(\s*\|\s*\w+=[^\|]\s*)+}}}/', $content, $matches);
+		print_r($matches);
+		$matches = preg_split('/\s*\|\s*/', $matches[1]);
+		$fields = array();
+		foreach ($matches as $match) {
+			$x = preg_split('/=/', $match);
+			$fields[strtrim($x[0])] = strtrim($x[1]);
+		}
+		return array(
+			     priority    => intval($fields['priority']),
+			     user        => $fields['user'],
+			     description => $fields['description'],
+			     date        => $fields['date'],
+			     status      => $fields['status'],
+			     progress    => intval($fields['progress'])
+			     );
+	}
+
 	private static function getTasks($parentTitle) {
 		$tasks = array();
 		foreach ($parentTitle->getSubpages() as $title) {
 			$taskName = $title->getSubpageText();
 			$article = new Article($title, 0);
 			$content = $article->getContent();
+			print_r self::parseTask($content);
 			$xml = new SimpleXMLElement($content);
 			$attrs = $xml->attributes();
 			$tasks[$taskName] = array(
@@ -163,37 +183,37 @@ END;
 		return $text;
 	}
 
-	public static function taskHook($input, $args, $parser) {
-		$parser->disableCache();
+/* 	public static function taskHook($input, $args, $parser) { */
+/* 		$parser->disableCache(); */
 
-		global $wgTitle;
-		if ($wgTitle->getNamespace() != NS_TASKS || !$wgTitle->isSubpage())
-			return '';
-	
-		$text = <<< END
-{| class="task"  
-| Priorität:
-| {$args['priority']}
-|-
-| Verantwortlicher:
-| [[Benutzer:{$args['user']}|{$args['user']}]]
-|-  
-| Beschreibung:
-| {$args['description']}
-|-
-| Erstellungsdatum:
-| {$args['date']}
-|-
-| Status:
-| {$args['status']}
-|-
-| Fortschritt:
-| {$args['progress']}
-|}
-END;
+/* 		global $wgTitle; */
+/* 		if ($wgTitle->getNamespace() != NS_TASKS || !$wgTitle->isSubpage()) */
+/* 			return ''; */
 
-		return $parser->recursiveTagParse($text);
-	}
+/* 		$text = <<< END */
+/* {| class="task"   */
+/* | Priorität: */
+/* | {$args['priority']} */
+/* |- */
+/* | Verantwortlicher: */
+/* | [[Benutzer:{$args['user']}|{$args['user']}]] */
+/* |-   */
+/* | Beschreibung: */
+/* | {$args['description']} */
+/* |- */
+/* | Erstellungsdatum: */
+/* | {$args['date']} */
+/* |- */
+/* | Status: */
+/* | {$args['status']} */
+/* |- */
+/* | Fortschritt: */
+/* | {$args['progress']} */
+/* |} */
+/* END; */
+
+/* 		return $parser->recursiveTagParse($text); */
+/* 	} */
 
 	public static function headerHook(&$article, &$outputDone, &$pcache) {
 		global $wgOut, $wgTitle, $wgScriptPath, $wgJsMimeType, $wgTaskListPath;
@@ -216,10 +236,10 @@ END;
 	public static function tasksHook($input, $args, $parser) {
 		$parser->disableCache();
 
-		global $wgTitle;		
+		global $wgTitle;
 		if ($wgTitle->getNamespace() != NS_TASKS || $wgTitle->isSubpage())
 			return '';
-	
+
 		if ($wgTitle->getText() == wfMsg('tasklist-overview'))
 			return self::allTasks();
 		else
@@ -244,7 +264,7 @@ END;
 					$fields[$key] = $wgRequest->getText($key);
 				}
 			} elseif ($editpage->mArticle->exists()) {
-				$xml = new SimpleXMLElement($editpage->mArticle->getContent());	
+				$xml = new SimpleXMLElement($editpage->mArticle->getContent());
 				$attrs  = $xml->attributes();
 				foreach ($fields as $key => $value) {
 					$fields[$key] = $attrs[$key];
@@ -252,12 +272,13 @@ END;
 			}
 
 			$editpage->textbox1 = <<< END
-<task priority="{$fields['priority']}"
-      user="{$fields['user']}"
-      description="{$fields['description']}"
-      date="{$fields['date']}"
-      status="{$fields['status']}"
-      progress="{$fields['progress']}"/>
+{{Task
+|priority={$fields['priority']
+|user={$fields['user']}
+|description={$fields['description']}
+|date={$fields['date']}
+|status={$fields['status']}
+|progress={$fields['progress']}}}
 END;
 
 			$wgOut->setPageTitle(wfMsg( 'editing', $editpage->mTitle->getPrefixedText() ) );
@@ -285,10 +306,10 @@ END;
 					}
 				}
 
-				
+
 				$wgOut->addHTML('<form id="editform" name="editform" method="post" action="' . $editpage->mTitle->escapeLocalURL("action=submit") . '" enctype="multipart/form-data">');
 				$wgOut->addHTML('<table border="0">');
- 
+
 				$wgOut->addHTML('<tr><td>Priorität:</td><td><input id="priority" name="priority" type="text" size="20" value="' . $fields['priority'] . '"/></td></tr>' . "\n");
 				$wgOut->addHTML('<tr><td>Verantwortlicher:</td><td><input id="user" name="user" type="text" size="20" value="' . $fields['user'] . '"/></td></tr>' . "\n");
 				$wgOut->addHTML('<tr><td>Beschreibung:</td><td><input id="description" name="description" type="text" size="20" value="' . $fields['description'] .'"/></td></tr>' . "\n");
@@ -300,7 +321,7 @@ END;
 				$wgOut->addHTML('</table>');
 				$wgOut->addHTML('<input id="wpSave" name="wpSave" type="submit" value="' . wfMsg('savearticle') . '"/>');
 				$wgOut->addHTML('<input id="wpPreview" name="wpPreview" type="submit" value="' . wfMsg('showpreview') . '"/> ');
-				$wgOut->addHTML('<input id="wpDiff" name="wpDiff" type="submit" value="' . wfMsg('showdiff') . '"/> ');                       
+				$wgOut->addHTML('<input id="wpDiff" name="wpDiff" type="submit" value="' . wfMsg('showdiff') . '"/> ');
 				$wgOut->addHTML('</form>');
 			}
 
@@ -313,7 +334,7 @@ END;
 
 	public static function init() {
 		global $wgParser;
-		$wgParser->setHook('task', array('TaskList', 'taskHook'));
+		//$wgParser->setHook('task', array('TaskList', 'taskHook'));
 		$wgParser->setHook('tasks', array('TaskList', 'tasksHook'));
 		return true;
         }
@@ -323,7 +344,7 @@ class NewProject extends SpecialPage {
 	function __construct() {
 		parent::__construct('NewProject');
 	}
- 
+
 	function execute($par) {
 		global $wgRequest, $wgOut;
 
@@ -350,7 +371,7 @@ class NewTask extends SpecialPage {
 	function __construct() {
 		parent::__construct('NewTask');
 	}
- 
+
 	function execute($par) {
 		global $wgRequest, $wgOut;
 
