@@ -4,7 +4,8 @@ if (!defined('MEDIAWIKI')) die();
 $wgExtensionCredits['other']['TaskList'] = array(
 	'name'           => 'TaskList',
 	'author'         => array('Daniel Mendler'),
-	'description'    => 'Simple Task manager'
+	'description'    => 'Simple Task manager',
+	'url'            => 'http://github.com/minad/TaskList/tree/master'
 );
 
 define('NS_TASKS', 300);
