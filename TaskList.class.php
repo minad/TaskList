@@ -45,7 +45,7 @@ class TaskList {
 		$fields = array();
 		foreach ($matches as $match) {
 			$x = preg_split('/=/', $match);
-			$fields[trim($x[0])] = trim($x[1]);
+			$fields[trim(strtolower($x[0]))] = trim($x[1]);
 		}
 		return array(name        => $name,
 			     priority    => intval($fields['priority']),
@@ -59,7 +59,7 @@ class TaskList {
 
 	public static function fixName($name) {
 		$name = trim($name);
-		$name{0} = strtoupper($name{0});
+		$name = strtoupper(substr($name, 0, 1)) . substr($name, 1);
 		return $name;
 	}
 
