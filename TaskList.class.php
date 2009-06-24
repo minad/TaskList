@@ -49,12 +49,18 @@ class TaskList {
 		}
 		return array(name        => $name,
 			     priority    => intval($fields['priority']),
-			     user        => ucwords($fields['user']),
+			     user        => self::fixName($fields['user']),
 			     description => $fields['description'],
 			     date        => $fields['date'],
 			     status      => $fields['status'],
 			     progress    => intval($fields['progress'])
 			     );
+	}
+
+	public static function fixName($name) {
+		$name = trim($name);
+		$name{0} = strtoupper($name{0});
+		return $name;
 	}
 
 	public static function cmpTask($a, $b) {
@@ -220,7 +226,7 @@ class TaskList {
 			$task = null;
 			if ($wgRequest->wasPosted()) {
 				$task = array(priority    => intval($wgRequest->getText('priority')),
-					      user        => ucwords(trim($wgRequest->getText('user'))),
+					      user        => self::fixName($wgRequest->getText('user')),
 					      description => $wgRequest->getText('description'),
 					      date        => $wgRequest->getText('date'),
 					      status      => $wgRequest->getText('status'),
@@ -291,7 +297,7 @@ class NewProject extends SpecialPage {
 		global $wgRequest, $wgOut;
 
 		$project = $wgRequest->getText('project');
-		if ($wgRequest->wasPosted() && $project && $title = Title::makeTitleSafe(NS_TASKS, ucwords(trim($project)))) {
+		if ($wgRequest->wasPosted() && $project && $title = Title::makeTitleSafe(NS_TASKS, TaskList::fixName($project))) {
 			$article = new Article($title);
 			$article->insertNewArticle('<tasks/>', '', false, false, false, '');
 		} else {
@@ -325,9 +331,9 @@ class NewTask extends SpecialPage {
 			$project = $par;
 
 		if ($wgRequest->wasPosted() && $project && $name &&
-		    $title = Title::makeTitleSafe(NS_TASKS, ucwords(trim($project)) . '/' . ucwords(trim($name)))) {
+		    $title = Title::makeTitleSafe(NS_TASKS, TaskList::fixName($project) . '/' . TaskList::fixName($name))) {
 			$task = array(priority    => intval($wgRequest->getText('priority')),
-				      user        => ucwords(trim($wgRequest->getText('user'))),
+				      user        => TaskList::fixName($wgRequest->getText('user')),
 				      description => $wgRequest->getText('description'),
 				      date        => $wgRequest->getText('date'),
 				      status      => $wgRequest->getText('status'),
