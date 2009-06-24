@@ -302,7 +302,7 @@ class NewProject extends SpecialPage {
 			$overviewUrl = Title::makeTitle(NS_TASKS, wfMsg('tasklist-overview'))->getLocalURL();
 
 			$wgOut->addHTML('<ul class="taskmenu"><li><a href="'.$overviewUrl.'">'.wfMsg('tasklist-overview').'</a></li></ul>'.
-					'<form id="editform" method="post" action="' . $this->getTitle()->escapeLocalURL() .
+					'<form class="taskform" method="post" action="' . $this->getTitle()->escapeLocalURL() .
 					'"><table><tr><td><label for="project">'.wfMsg('tasklist-name').
 					':</label></td><td><input id="project" name="project" type="text" size="20"/></td></tr><tr><td colspan="2">'.
 					'<input id="wpSave" name="wpSave" type="submit" value="' . wfMsg('savearticle') . '"/></td></tr></table></form>');
