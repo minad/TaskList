@@ -1,4 +1,4 @@
-table.tasklist, table.projectlist {
+.tlTasks, tlProjects {
   border-top: 1px solid;
   border-spacing: 0;
   border-collapse: collapse;
@@ -6,141 +6,141 @@ table.tasklist, table.projectlist {
   margin: 1em 0;
 }
 
-table.tasklist td, table.tasklist th,
-table.projectlist td, table.projectlist th {
+.tlTasks td, .tlTasks th,
+.tlProjects td, .tlProjects th {
   border: 1px solid #8898BF;
   padding: 0.1em;
 }
 
-.task .progress {
+.tlTasks th, .tlProjects th {
+  background: #EEE;
+  font-weight: bold;
+  font-size: 10pt;
+}
+
+.tlProgress {
   border: 1px solid #000;
   background: #F00;
   text-align: center;
   padding: 0 1px;
 }
 
-table.projectlist tr.project th {
+.tlProject th {
   padding: 0.5em;
   text-align: left;
 }
 
-table.projectlist tr.project .title {
+.tlTitle {
   font-size: 13pt;
   float: left;
 }
 
-tr.project .title a,
-tr.project .title a:active,
-tr.project .title a:hover,
-tr.project .title a:visited {
+.tlTitle a,
+.tlTitle a:active,
+.tlTitle a:hover,
+.tlTitle a:visited {
   color: #000;
 }
 
-tr.project .count {
+.tlCount {
   float: right;
 }
 
-tr.project {
+.tlProject {
   cursor: pointer;
 }
 
-table.tasklist th, table.projectlist th {
-  background: #EEE;
-  font-weight: bold;
-  font-size: 10pt;
-}
-
-table.projectlist tr.project th {
+.tlProject th {
   background: #D8E8FF;
 }
 
-table.projectlist tr.project:hover th,
-table.projectlist tr.project.selected th {
+.tlProject:hover th,
+.tlProject.tlSelected th {
   background: #84AAF0;
 }
 
-table.projectlist tr.task, table.projectlist tr.placeholder {
+.tlProjects .tlTask, .tlProjects .tlPlaceholder {
   display: none;
 }
 
-table.projectlist tr.placeholder td {
+.tlPlaceholder td {
   background: #FFF !important;
   height: 2em;
   padding: 0;
 }
 
-td.priority, th.priority {
+.tlPriority, .tlPriority {
   width: 6em;
   text-align: center;
   white-space: nowrap;
 }
 
-td.actions, th.actions {
+.tlActions {
   width: 1em;
   white-space: nowrap;
 }
 
-.priority1:hover {
+.tlPriority1:hover {
   background: #FF9999 !important;
 }
 
-.priority1 .priority {
+.tlPriority1 .tlPriority {
   background: #DD0000 !important;
 }
 
-.priority2 .priority  {
+.tlPriority2 .tlPriority  {
   background: #EE7600 !important;
 }
 
-.priority2:hover {
+.tlPriority2:hover {
   background: #FFDD99 !important;
 }
 
-.priority3 .priority {
+.tlPriority3 .tlPriority {
   background: #FFEE00 !important;
 }
 
-.priority3:hover {
+.tlPriority3:hover {
   background: #FFFF99 !important;
 }
 
-.priority4 .priority {
+.tlPriority4 .tlPriority {
   background: #336699 !important;
 }
 
-.priority4:hover {
+.tlPriority4:hover {
   background: #AAAAFF !important;
 }
 
-.priority5 .priority {
+.tlPriority5 .tlPriority {
   background: #009900 !important;
 }
 
-.priority5:hover {
+.tlPriority5:hover {
   background: #99FF99 !important;
 }
 
-.priority100 .priority {
+.tlPriority100 .tlPriority {
   background: #00FF00 !important;
 }
 
-.taskmenu {
+.tlMenu {
   list-style: none;
   margin: 0;
   display: block;
   clear: both;
 }
 
-.taskmenu li {
+.tlMenu li {
   float: left;
   border: 1px solid #8898BF;
   margin-right: 0.2em;
 }
 
-.taskmenu a,
-.taskmenu a:active,
-.taskmenu a:visited,
-.taskmenu a:hover {
+.tlMenu a,
+.tlMenu a:active,
+.tlMenu a:visited,
+.tlMenu a:hover {
   display: block;
   padding: 0.2em 0.4em;
   color: #000;
@@ -148,21 +148,21 @@ td.actions, th.actions {
   font-weight: bold;
 }
 
-.taskmenu a:active,
-.taskmenu a:hover {
+.tlMenu a:active,
+.tlMenu a:hover {
   color: #000;
   background: #84AAF0;
 }
 
-.taskform {
+.tlForm {
   clear: both;
 }
 
-.taskform label {
+.tlForm label {
   font-weight: bold;
 }
 
-.preview-box {
+.tlPreview {
   border: 2px solid #A00;
   padding: 8px;
   margin: 8px;
