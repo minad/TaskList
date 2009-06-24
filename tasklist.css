@@ -1,0 +1,24 @@
+table.tasks {
+  border-top: 1px solid;
+  border-spacing: 0;
+  border-collapse: collapse;
+}
+
+table.tasks td, table.tasks th {
+  border: 1px solid #999;
+}
+
+td.priority1 {
+  background: #CD0000;
+}
+
+td.priority2 {
+  background: #EE7600;
+}
+
+table.projects {
+  border: 1px solid #999;
+  border-spacing: 0;
+  border-collapse: collapse;
+}
+
