@@ -208,10 +208,14 @@ class TaskList {
 		return $text;
 	}
 
-	public static function headerHook(&$article, &$outputDone, &$pcache) {
+	public static function writeHeader() {
 		global $wgOut, $wgTitle, $wgScriptPath, $wgJsMimeType, $wgTaskListPath;
 		$wgOut->addLink(array('rel' => 'stylesheet', 'type' => 'text/css', 'href' => "$wgScriptPath$wgTaskListPath/tasklist.css"));
 		$wgOut->addScript("<script type=\"$wgJsMimeType\" src=\"$wgScriptPath$wgTaskListPath/tasklist.js\"></script>\n");
+	}
+
+	public static function headerHook(&$article, &$outputDone, &$pcache) {
+		self::writeHeader();
 		return true;
 	}
 
@@ -322,6 +326,7 @@ class NewProject extends SpecialPage {
 			$article = new Article($title);
 			$article->insertNewArticle('<tasks/>', '', false, false, false, '');
 		} else {
+			TaskList::writeHeader();
 			$wgOut->setPageTitle(wfMsg('newproject'));
 
 			$overviewUrl = Title::makeTitle(NS_TASKS, wfMsg('tlOverview'))->getLocalUrl();
@@ -360,6 +365,7 @@ class NewTask extends SpecialPage {
 			$article = new Article($title);
 			$article->insertNewArticle(TaskList::formatTask($task), '', false, false, false, '');
 		} else {
+			TaskList::writeHeader();
 			$wgOut->setPageTitle(wfMsg('newtask'));
 
 			$overviewUrl = Title::makeTitle(NS_TASKS, wfMsg('tlOverview'))->getLocalUrl();

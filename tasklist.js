@@ -31,7 +31,7 @@ function taskListInit() {
     children = element.getElementsByTagName('tr');
     for (i = 0; i < children.length; ++i) {
 	child = children[i];
-	if (child.getAttribute('class').indexOf('project') != -1) {
+	if (child.getAttribute('class').indexOf('tlProject') != -1) {
 	    child.collapsed = true;
 	    child.onclick = taskListToggle;
 	} else
