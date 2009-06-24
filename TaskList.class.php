@@ -28,12 +28,18 @@ class TaskList {
 		return $projects;
 	}
 
-	private static function formatTask($task) {
+	public static function truncate($s, $max = 30, $ellipsis = '...') {
+		if (strlen($s) <= $max)
+			return $s;
+		return substr_replace($s, $ellipsis, $max - strlen($ellipsis));
+	}
+
+	public static function formatTask($task) {
 		return "{{Task\n|priority={$task['priority']}\n|user={$task['user']}\n|description={$task['description']}\n" .
 			"|date={$task['date']}\n|status={$task['status']}\n|progress={$task['progress']}}}";
 	}
 
-	private static function parseTask($content) {
+	private static function parseTask($name, $content) {
 		preg_match('/\{\{Task(.*?)\}\}/s', $content, $matches);
 		$matches = preg_split('/\s*\|\s*/', $matches[1]);
 		$fields = array();
@@ -41,14 +47,22 @@ class TaskList {
 			$x = preg_split('/=/', $match);
 			$fields[trim($x[0])] = trim($x[1]);
 		}
-		return array(
+		return array(name        => $name,
 			     priority    => intval($fields['priority']),
-			     user        => $fields['user'],
+			     user        => ucwords($fields['user']),
 			     description => $fields['description'],
 			     date        => $fields['date'],
 			     status      => $fields['status'],
 			     progress    => intval($fields['progress'])
 			     );
+	}
+
+	public static function cmpTask($a, $b) {
+		if ($a['priority'] != $b['priority'])
+			return $a['priority'] < $b['priority'] ? -1 : 1;
+		if ($a['name'] != $b['name'])
+			return $a['name'] < $b['name'] ? -1 : 1;
+		return 0;
 	}
 
 	private static function getTasks($parentTitle) {
@@ -57,26 +71,42 @@ class TaskList {
 			$taskName = $title->getSubpageText();
 			$article = new Article($title, 0);
 			$content = $article->getContent();
-			$tasks[$taskName] = self::parseTask($content);
+			$tasks[] = self::parseTask($taskName, $content);
 		}
+		usort($tasks, array('TaskList', 'cmpTask'));
 		return $tasks;
 	}
 
-	private static function taskRow($projectName, $name, $task) {
+	private static function img($name) {
 		global $wgScriptPath, $wgTaskListPath;
+		return "<img src=\"$wgScriptPath$wgTaskListPath/images/$name.png\" alt=\"$name\"/>";
+	}
 
-		$title = Title::makeTitle(NS_TASKS, "$projectName/$name");
+	private static function taskRow($projectName, $task) {
+		$title = Title::makeTitle(NS_TASKS, $projectName.'/'.$task['name']);
 		$url = $title->getLocalURL();
 		$deleteURL = $title->getLocalURL('action=delete');
-		$deleteImg = "$wgScriptPath$wgTaskListPath/images/delete.png";
 		$editURL = $title->getLocalURL('action=edit');
-		$editImg = "$wgScriptPath$wgTaskListPath/images/edit.png";
+
+		$user = '';
+		if ($task['user']) {
+			$userUrl = Title::makeTitle(NS_USER, $task['user'])->getLocalUrl();
+			$user = '<a href="'.$userUrl.'">'.htmlspecialchars($task['user']).'</a>';
+		}
 
 		return '<tr class="task"><td class="priority priority'.$task['priority'].'">'.$task['priority'].'</td><td><a href="'.$url.'">'.
-			htmlspecialchars($name).'</a></td><td>'.htmlspecialchars($task['description']).'</td><td>'.htmlspecialchars($task['date']).
-			'</td><td>'.htmlspecialchars($task['status']).'</td><td><div class="progress" style="width: '.$task['progress'].
-			'%">'.$task['progress'].'%</div></td><td class="actions"><a href="'.$deleteURL.'"><img src="'.
-			$deleteImg.'"/></a><a href="'.$editURL.'"><img src="'.$editImg.'"/></a></td></tr>';
+			htmlspecialchars($task['name']).'</a></td><td>'.htmlspecialchars(self::truncate($task['description'])).'</td><td>'.htmlspecialchars($task['date']).
+			'</td><td>'.$user.'</td><td>'.htmlspecialchars(self::truncate($task['status'])).
+			'</td><td><div class="progress" style="width: '.$task['progress'].
+			'%">'.$task['progress'].'%</div></td><td class="actions"><a href="'.$deleteURL.'">'.
+			self::img('delete').'</a><a href="'.$editURL.'">'.self::img('edit').'</a></td></tr>';
+	}
+
+	private static function taskHeader($newTaskUrl) {
+		return '<tr class="task"><th>'.wfMsg('tasklist-prio').'</th><th>'.wfMsg('tasklist-name').
+			'</th><th>'.wfMsg('tasklist-description').'</th><th>'.wfMsg('tasklist-date').'</th><th>'
+			.wfMsg('tasklist-user').'</th><th>'.wfMsg('tasklist-status').'</th><th>'.wfMsg('tasklist-progress').
+			'</th><th class="unsortable"><a href="'.$newTaskUrl.'">'.self::img('add').'</a></th></tr>';
 	}
 
 	private static function allTasks() {
@@ -84,32 +114,32 @@ class TaskList {
 
 		$projects = self::getProjects();
 
-		$newTaskUrl = Title::makeTitle(NS_SPECIAL, wfMsg('newtask'))->getLocalURL();
 		$newProjectUrl = Title::makeTitle(NS_SPECIAL, wfMsg('newproject'))->getLocalURL();
 
-		$text = '<ul class="taskmenu"><li><a href="'.$newTaskUrl.'">'.wfMsg('newtask').'</a></li><li><a href="'.$newProjectUrl.'">'.wfMsg('newproject').
+		$text = '<ul class="taskmenu"></li><li><a href="'.$newProjectUrl.'">'.wfMsg('newproject').
 			'</a></li></ul><table id="projectlist">';
 
 		foreach ($projects as $projectName => $tasks) {
 			$projectUrl = Title::makeTitle(NS_TASKS, $projectName)->getLocalURL();
 
 			$projectPriority = 100;
-			foreach ($tasks as $name => $task) {
+			foreach ($tasks as $task) {
 				if ($task['priority'] < $projectPriority)
 					$projectPriority = $task['priority'];
 			}
 
-			$text .= '<tr class="project"><th class="priority priority'.$projectPriority.'"></th><th class="title" colspan="7"><a href="'.$projectUrl.'">'.
-				htmlspecialchars($projectName).'</a></th></tr><tr class="task"><th>'.wfMsg('tasklist-prio').'</th><th>'.wfMsg('tasklist-name').
-				'</th><th>'.wfMsg('tasklist-description').'</th><th>'.wfMsg('tasklist-date').'</th><th>'
-				.wfMsg('tasklist-status').'</th><th>'.wfMsg('tasklist-progress').'</th><th></th></tr>';
+			$newTaskUrl = Title::makeTitle(NS_SPECIAL, wfMsg('newtask').'/'.$projectName)->getLocalURL();
+			$text .= '<tr class="project"><th class="priority priority'.$projectPriority.'"></th><th colspan="8"><span class="title"><a href="'.$projectUrl.'">'.
+				htmlspecialchars($projectName).'</a></span> <span class="count">'. count($tasks).' '.wfMsg('tasklist-task/s').'</span></th></tr>' .
+				self::taskHeader($newTaskUrl);
 
 			if (empty($tasks)) {
-				$text .= '<tr class="task"><td colspan="7">'.wfMsg('tasklist-no-tasks').'</td></tr>';
+				$text .= '<tr class="task"><td colspan="8">'.wfMsg('tasklist-no-tasks').'</td></tr>';
 			} else {
-				foreach ($tasks as $name => $task)
-					$text .= self::taskRow($projectName, $name, $task);
+				foreach ($tasks as $task)
+					$text .= self::taskRow($projectName, $task);
 			}
+			$text .= '<tr class="placeholder"><td colspan="8"></td></tr>';
 		}
 
 		$text .= '</table>';
@@ -126,15 +156,13 @@ class TaskList {
 		$newTaskUrl = Title::makeTitle(NS_SPECIAL, wfMsg('newtask').'/'.$projectName)->getLocalURL();
 
 		$text = '<ul class="taskmenu"><li><a href="'.$overviewUrl.'">'.wfMsg('tasklist-overview').'</a></li><li><a href="'.$newTaskUrl.'">'.wfMsg('newtask').
-			'</a></li></ul><table id="tasklist" class="sortable"><tr><th>'.wfMsg('tasklist-prio').'</th><th>'.wfMsg('tasklist-name').'</th><th>'.
-			wfMsg('tasklist-description').'</th><th>'.wfMsg('tasklist-date').'<th>'.wfMsg('tasklist-status').'</th><th>'.wfMsg('tasklist-progress').
-			'</th><th class="unsortable"></th></tr>';
+			'</a></li></ul><table id="tasklist" class="sortable">' . self::taskHeader($newTaskUrl);
 
 		if (empty($tasks)) {
-			$text .= '<tr class="task"><td colspan="7">'.wfMsg('tasklist-no-tasks').'</td></tr>';
+			$text .= '<tr class="task"><td colspan="8">'.wfMsg('tasklist-no-tasks').'</td></tr>';
 		} else {
-			foreach ($tasks as $name => $task)
-				$text .= self::taskRow($projectName, $name, $task);
+			foreach ($tasks as $task)
+				$text .= self::taskRow($projectName, $task);
 		}
 
 		$text .= '</table>';
@@ -179,34 +207,31 @@ class TaskList {
 	public static function editHook(&$editpage) {
 		global $wgRequest, $wgOut, $wgParser, $wgUser;
 
-		if ($editpage->mTitle->getNamespace() == NS_TASKS && $editpage->mTitle->isSubpage()) {
-			$fields = array(
-				'priority' => 0,
-				'user' => '',
-				'description' => '',
-				'date' => '',
-				'status' => '',
-				'progress' => 0,
-			);
+		$title = $editpage->getArticle()->getTitle();
+		$article = $editpage->getArticle();
 
+		if ($title->getNamespace() == NS_TASKS && $title->isSubpage()) {
+			$task = null;
 			if ($wgRequest->wasPosted()) {
-				foreach ($fields as $key => $value)
-					$fields[$key] = $wgRequest->getText($key);
-			} elseif ($editpage->mArticle->exists()) {
-				$attrs  = self::parseTask($editpage->mArticle->getContent());
-				foreach ($fields as $key => $value)
-					$fields[$key] = $attrs[$key];
+				$task = array(priority    => intval($wgRequest->getText('priority')),
+					      user        => ucwords($wgRequest->getText('user')),
+					      description => $wgRequest->getText('description'),
+					      date        => $wgRequest->getText('date'),
+					      status      => $wgRequest->getText('status'),
+					      progress    => intval($wgRequest->getText('progress')));
+			} elseif ($article->exists()) {
+				$task = self::parseTask(null, $article->getContent());
 			}
 
-			$editpage->textbox1 = self::formatTask($fields);
+			$editpage->textbox1 = self::formatTask($task);
 
-			$wgOut->setPageTitle(wfMsg( 'editing', $editpage->mTitle->getPrefixedText() ) );
+			$wgOut->setPageTitle(wfMsg( 'editing', $title->getPrefixedText() ) );
 
 			if ($wgRequest->getCheck('wpSave')) {
-				if( $editpage->mTitle->exists() )
-					$editpage->mArticle->updateArticle( $editpage->textbox1, '', false,  false, false, '' );
+				if( $title->exists() )
+					$article->updateArticle( $editpage->textbox1, '', false,  false, false, '' );
 				else
-					$editpage->mArticle->insertNewArticle( $editpage->textbox1, '', false, false, false, '');
+					$article->insertNewArticle( $editpage->textbox1, '', false, false, false, '');
 			} else {
 				if ($wgRequest->wasPosted()) {
 					if ($wgRequest->getCheck('wpDiff')) {
@@ -215,22 +240,23 @@ class TaskList {
 						$parserOptions = ParserOptions::newFromUser($wgUser);
 						$parserOptions->setEditSection(false);
 						$parserOptions->setTidy(true);
-						$parserOutput = $wgParser->parse($editpage->textbox1, $editpage->mTitle, $parserOptions);
+						$parserOutput = $wgParser->parse($editpage->textbox1, $title, $parserOptions);
 						$wgOut->addHTML('<div style="border: 2px solid #A00; padding: 8px; margin: 8px;">' . $parserOutput->getText() . '</div>');
 					}
 				}
 
-				$wgOut->addHTML('<form class="taskform" method="post" action="' . $editpage->mTitle->escapeLocalURL("action=submit") . '"><table><tr><td><label for="priority">' .
-						wfMsg('tasklist-priority').':</label></td><td><select id="priority" name="priority" size="1">'.self::optionList(1, 5, 1, $fields['priority']).
+				$wgOut->addHTML('<form class="taskform" method="post" action="' . $title->escapeLocalURL("action=submit") .
+						'"><table><tr><td><label for="priority">' .
+						wfMsg('tasklist-priority').':</label></td><td><select id="priority" name="priority" size="1">'.self::optionList(1, 5, 1, $task['priority']).
 						'</select></td></tr><tr><td><label for="user">'
 						.wfMsg('tasklist-user').':</label></td><td><input id="user" name="user" type="text" size="20" value="'.
-						htmlspecialchars($fields['user']).'"/></td></tr><tr><td><label for="description">'.wfMsg('tasklist-description').
-						':</label></td><td><input id="description" name="description" type="text" size="40" value="'.htmlspecialchars($fields['description']).
+						htmlspecialchars($task['user']).'"/></td></tr><tr><td><label for="description">'.wfMsg('tasklist-description').
+						':</label></td><td><input id="description" name="description" type="text" size="40" value="'.htmlspecialchars($task['description']).
 						'"/></td></tr><tr><td><label for="date">'.wfMsg('tasklist-date').':</label></td><td><input id="date" name="date" type="text" size="10" value="'.
-						htmlspecialchars($fields['date']).'"/></td></tr><tr><td><label for="status">'.wfMsg('tasklist-status').
-						':</label></td><td><input id="status" name="status" type="text" size="40" value="' . htmlspecialchars($fields['status']) .
+						htmlspecialchars($task['date']).'"/></td></tr><tr><td><label for="status">'.wfMsg('tasklist-status').
+						':</label></td><td><input id="status" name="status" type="text" size="40" value="' . htmlspecialchars($task['status']) .
 						'"/></td></tr><tr><td><label for="progress">'.wfMsg('tasklist-progress').
-						':</label></td><td><select id="progress" name="progress" size="1">'.self::optionList(0,100,10,$fields['progress']).
+						':</label></td><td><select id="progress" name="progress" size="1">'.self::optionList(0,100,10,$task['progress']).
 						'</select></td></tr><tr><td colspan="2"><input id="wpSave" name="wpSave" type="submit" value="' . wfMsg('savearticle')
 						. '"/><input id="wpPreview" name="wpPreview" type="submit" value="' . wfMsg('showpreview') .
 						'"/><input id="wpDiff" name="wpDiff" type="submit" value="' . wfMsg('showdiff') . '"/></td></tr></table></form>');
@@ -293,19 +319,14 @@ class NewTask extends SpecialPage {
 			$project = $par;
 
 		if ($wgRequest->wasPosted() && $project && $name) {
-			$fields = array(
-				'priority' => 0,
-				'user' => '',
-				'description' => '',
-				'date' => '',
-				'status' => '',
-				'progress' => 0,
-			);
-			foreach ($fields as $key => $value)
-				$fields[$key] = $wgRequest->getText($key);
-
-			$article = new Article(Title::makeTitle(NS_TASKS, ucwords($project . '/' . $name)));
-			$article->insertNewArticle(TaskList::formatTask($fields), '', false, false, false, '');
+			$task = array(priority    => intval($wgRequest->getText('priority')),
+					user        => ucwords($wgRequest->getText('user')),
+					description => $wgRequest->getText('description'),
+					date        => $wgRequest->getText('date'),
+					status      => $wgRequest->getText('status'),
+					progress    => intval($wgRequest->getText('progress')));
+			$article = new Article(Title::makeTitle(NS_TASKS, ucwords($project) . '/' . ucwords($name)));
+			$article->insertNewArticle(TaskList::formatTask($task), '', false, false, false, '');
 		} else {
 			TaskList::addStyle();
 

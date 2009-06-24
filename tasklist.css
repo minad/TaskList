@@ -13,7 +13,7 @@ table#projectlist td, table#projectlist th {
 }
 
 td.priority, th.priority {
-  width: 5em;
+  width: 6em;
   text-align: center;
   white-space: nowrap;
 }
@@ -24,23 +24,23 @@ td.actions, th.actions {
 }
 
 .priority1 {
-  background: #CD0000;
+  background: #DD0000 !important;
 }
 
 .priority2 {
-  background: #EE7600;
+  background: #EE7600 !important;
 }
 
 .priority3 {
-  background: #FF7600;
+  background: #FFEE00 !important;
 }
 
 .priority4 {
-  background: #FF7600;
+  background: #336699 !important;
 }
 
 .priority5 {
-  background: #FF7600;
+  background: #009900 !important;
 }
 
 .priority100 {
@@ -60,11 +60,12 @@ tr.project {
 
 table#projectlist tr.project th {
   padding: 0.5em;
+  text-align: left;
 }
 
 table#projectlist tr.project .title {
   font-size: 13pt;
-  text-align: left;
+  float: left;
 }
 
 tr.project .title a,
@@ -72,6 +73,10 @@ tr.project .title a:active,
 tr.project .title a:hover,
 tr.project .title a:visited {
   color: #000;
+}
+
+tr.project .count {
+  float: right;
 }
 
 table#tasklist th, table#projectlist th {
@@ -94,8 +99,14 @@ table#tasklist tr:hover {
   background: #FFAAAA;
 }
 
-table#projectlist tr.task {
+table#projectlist tr.task, table#projectlist tr.placeholder {
   display: none;
+}
+
+table#projectlist tr.placeholder td {
+  background: #FFF !important;
+  height: 2em;
+  padding: 0;
 }
 
 .taskmenu {

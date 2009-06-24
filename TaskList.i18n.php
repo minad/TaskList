@@ -16,7 +16,8 @@ $messages['en'] = array(
 	'tasklist-date'        => 'Date',
 	'tasklist-status'      => 'Status',
 	'tasklist-progress'    => 'Progress',
-	'tasklist-no-tasks'    => 'No Tasks found'
+	'tasklist-no-tasks'    => 'No Tasks found',
+	'tasklist-task/s'      => 'Task/s'
 );
 
 $messages['de'] = array(
@@ -32,5 +33,6 @@ $messages['de'] = array(
 	'tasklist-date'        => 'Datum',
 	'tasklist-status'      => 'Status',
 	'tasklist-progress'    => 'Fortschritt',
-	'tasklist-no-tasks'    => 'Keine Aufgaben gefunden'
+	'tasklist-no-tasks'    => 'Keine Aufgaben gefunden',
+	'tasklist-task/s'      => 'Aufgabe/n'
 );
