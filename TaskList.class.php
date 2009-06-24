@@ -116,8 +116,14 @@ class TaskList {
 
 		$newProjectUrl = Title::makeTitle(NS_SPECIAL, wfMsg('newproject'))->getLocalURL();
 
-		$text = '<ul class="taskmenu"></li><li><a href="'.$newProjectUrl.'">'.wfMsg('newproject').
-			'</a></li></ul><table id="projectlist">';
+		$text = '<ul class="taskmenu"></li><li><a href="'.$newProjectUrl.'">'.wfMsg('newproject'). '</a></li></ul>';
+
+		if (empty($projects)) {
+			$text .= '<p>' . wfMsg('tasklist-no-projects') . '</p>';
+			return $text;
+		}
+
+		$text .= '<table id="projectlist">';
 
 		foreach ($projects as $projectName => $tasks) {
 			$projectUrl = Title::makeTitle(NS_TASKS, $projectName)->getLocalURL();
