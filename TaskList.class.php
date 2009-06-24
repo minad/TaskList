@@ -231,7 +231,7 @@ class TaskList {
 	public static function optionList($min, $max, $step, $selected, $postfix = '') {
 		$text = '';
 		for ($i=$min; $i<=$max; $i += $step)
-			$text .= $i == $selected ? "<option selected=\"selected\" value=\"$i\">$i$postfix</option>" : "<option>$i</option>";
+			$text .= $i == $selected ? "<option selected=\"selected\" value=\"$i\">$i$postfix</option>" : "<option value=\"$i\">$i$postfix</option>";
 		return $text;
 	}
 
