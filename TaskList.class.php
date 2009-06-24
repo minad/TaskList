@@ -220,7 +220,7 @@ class TaskList {
 			$task = null;
 			if ($wgRequest->wasPosted()) {
 				$task = array(priority    => intval($wgRequest->getText('priority')),
-					      user        => ucwords($wgRequest->getText('user')),
+					      user        => ucwords(trim($wgRequest->getText('user'))),
 					      description => $wgRequest->getText('description'),
 					      date        => $wgRequest->getText('date'),
 					      status      => $wgRequest->getText('status'),
@@ -292,7 +292,7 @@ class NewProject extends SpecialPage {
 
 		$project = $wgRequest->getText('project');
 		if ($wgRequest->wasPosted() && $project) {
-			$article = new Article(Title::makeTitle(NS_TASKS, ucwords($project)));
+			$article = new Article(Title::makeTitle(NS_TASKS, ucwords(trim($project))));
 			$article->insertNewArticle('<tasks/>', '', false, false, false, '');
 		} else {
 			TaskList::addStyle();
@@ -326,12 +326,12 @@ class NewTask extends SpecialPage {
 
 		if ($wgRequest->wasPosted() && $project && $name) {
 			$task = array(priority    => intval($wgRequest->getText('priority')),
-					user        => ucwords($wgRequest->getText('user')),
-					description => $wgRequest->getText('description'),
-					date        => $wgRequest->getText('date'),
-					status      => $wgRequest->getText('status'),
-					progress    => intval($wgRequest->getText('progress')));
-			$article = new Article(Title::makeTitle(NS_TASKS, ucwords($project) . '/' . ucwords($name)));
+				      user        => ucwords(trim($wgRequest->getText('user'))),
+				      description => $wgRequest->getText('description'),
+				      date        => $wgRequest->getText('date'),
+				      status      => $wgRequest->getText('status'),
+				      progress    => intval($wgRequest->getText('progress')));
+			$article = new Article(Title::makeTitle(NS_TASKS, ucwords(trim($project)) . '/' . ucwords(trim($name))));
 			$article->insertNewArticle(TaskList::formatTask($task), '', false, false, false, '');
 		} else {
 			TaskList::addStyle();
