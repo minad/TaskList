@@ -130,7 +130,7 @@ class TaskList {
 
 		$newProjectUrl = Title::makeTitle(NS_SPECIAL, wfMsg('newproject'))->getLocalUrl();
 
-		$text = '<ul class="tlMenu"></li><li><a href="'.$newProjectUrl.'">'.wfMsg('newproject'). '</a></li></ul>';
+		$text = '<ul class="tlMenu"><li><a href="'.$newProjectUrl.'">'.wfMsg('newproject'). '</a></li></ul>';
 
 		if (empty($projects)) {
 			$text .= '<p>' . wfMsg('tlNoProjects') . '</p>';

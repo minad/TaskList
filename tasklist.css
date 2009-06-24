@@ -4,7 +4,6 @@
   border-collapse: collapse;
   width: 100%;
   margin: 0;
-  clear: both;
 }
 
 .tlTasks td, .tlTasks th,
@@ -127,7 +126,7 @@
 
 .tlMenu {
   list-style: none;
-  margin: 1em 0;
+  margin: 0;
   display: block;
   clear: both;
 }
@@ -135,7 +134,7 @@
 .tlMenu li {
   float: left;
   border: 1px solid #8898BF;
-  margin-right: 0.2em;
+  margin: 0 0.5em 0.5em 0;
 }
 
 .tlMenu a,
