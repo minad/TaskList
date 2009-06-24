@@ -4,6 +4,7 @@
   border-collapse: collapse;
   width: 100%;
   margin: 1em 0;
+  clear: both;
 }
 
 .tlTasks td, .tlTasks th,
@@ -31,7 +32,7 @@
 }
 
 .tlTitle {
-  font-size: 13pt;
+  font-size: 12pt;
   float: left;
 }
 
@@ -126,7 +127,7 @@
 
 .tlMenu {
   list-style: none;
-  margin: 0;
+  margin: 1em 0;
   display: block;
   clear: both;
 }
