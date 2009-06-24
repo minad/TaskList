@@ -279,18 +279,18 @@ class TaskList {
 				$wgOut->addHTML('<form class="tlForm" method="post" action="' . $title->escapeLocalURL("action=submit") .
 						'"><table><tr><td><label for="tlPriority">' .
 						wfMsg('tlPriority').':</label></td><td><select id="tlPriority" name="tlPriority" size="1">'.
-						self::optionList(1, 5, 1, $task['priority']).
-						'</select></td></tr><tr><td><label for="tlUser">'
+						self::optionList(1, 5, 1, $task['priority']).'</select></td></tr><tr><td><label for="tlUser">'
 						.wfMsg('tlUser').':</label></td><td><input id="tlUser" name="tlUser" type="text" size="20" value="'.
-						htmlspecialchars($task['user']).'"/></td></tr><tr><td><label for="tlDescription">'.wfMsg('tlDescription').
-						':</label></td><td><textarea id="tlDescription" name="tlDescription" cols="50" rows="10">'.
-						htmlspecialchars($task['description']).'</textarea></td></tr><tr><td><label for="tlDate">'.wfMsg('tlDate').
+						htmlspecialchars($task['user']).'"/></td></tr><tr><td><label for="tlDate">'.wfMsg('tlDate').
 						':</label></td><td><input id="tlDate" name="tlDate" type="text" size="10" value="'.
 						htmlspecialchars($task['date']).'"/></td></tr><tr><td><label for="tlStatus">'.wfMsg('tlStatus').
 						':</label></td><td><input id="tlStatus" name="tlStatus" type="text" size="40" value="' . htmlspecialchars($task['status']) .
 						'"/></td></tr><tr><td><label for="tlProgress">'.wfMsg('tlProgress').
 						':</label></td><td><select id="tlProgress" name="tlProgress" size="1">'.self::optionList(0,100,10,$task['progress'], '%').
-						'</select></td></tr><tr><td colspan="2"><input id="wpSave" name="wpSave" type="submit" value="' . wfMsg('savearticle')
+						'</select></td></tr><tr><td><label for="tlDescription">'.wfMsg('tlDescription').
+						':</label></td><td><textarea id="tlDescription" name="tlDescription" cols="60" rows="15">'.
+						htmlspecialchars($task['description']).'</textarea></td></tr>'.
+						'<tr><td colspan="2"><input id="wpSave" name="wpSave" type="submit" value="' . wfMsg('savearticle')
 						. '"/><input id="wpPreview" name="wpPreview" type="submit" value="' . wfMsg('showpreview') .
 						'"/><input id="wpDiff" name="wpDiff" type="submit" value="' . wfMsg('showdiff') . '"/></td></tr></table></form>');
 			}
@@ -372,17 +372,16 @@ class NewTask extends SpecialPage {
 					htmlspecialchars($name).'"/></td></tr><tr><td><label for="tlPriority">'.wfMsg('tlPriority').':</label></td><td>'.
 					'<select id="tlPriority" name="tlPriority" size="1">'.TaskList::optionList(1,5,1,0).'</select></td></tr><tr><td><label for="tlUser">'.
 					wfMsg('tlUser').
-					':</label></td><td><input id="tlUser" name="tlUser" type="text" size="20"/></td></tr><tr><td><label for="tlDescription">'.
-					wfMsg('tlDescription').
-					':</label></td><td><textarea id="tlDescription" name="tlDescription" cols="50" rows="10"></texarea></td></tr>'.
+					':</label></td><td><input id="tlUser" name="tlUser" type="text" size="20"/></td></tr>'.
 					'<tr><td><label for="tlDate">'.wfMsg('tlDate').
 					':</label></td><td><input id="tlDate" name="tlDate" type="text" size="10" value="'.date('d.m.y').
 					'"/></td></tr><tr><td><label for="tlStatus">'.wfMsg('tlStatus').
 					':</label></td><td><input id="tlStatus" name="tlStatus" type="text" size="40"/></td></tr><tr><td><label for="tlProgress">'.
-					wfMsg('tlProgress').
-					':</label></td><td><select id="tlProgress" name="tlProgress" size="1">'.
-					TaskList::optionList(0,100,10,0,'%').'</select></td></tr><tr><td colspan="2">'.
-					'<input id="wpSave" name="wpSave" type="submit" value="' . wfMsg('savearticle') . '"/></table></form>');
+					wfMsg('tlProgress'). ':</label></td><td><select id="tlProgress" name="tlProgress" size="1">'.
+					TaskList::optionList(0,100,10,0,'%').'</select></td></tr><tr><td><label for="tlDescription">'.
+					wfMsg('tlDescription').':</label></td><td><textarea id="tlDescription" name="tlDescription" cols="60" rows="15">'.
+					'</texarea></td></tr><tr><td colspan="2">'.'<input id="wpSave" name="wpSave" type="submit" value="'
+					. wfMsg('savearticle') . '"/></table></form>');
 		}
 	}
 }
