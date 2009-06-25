@@ -60,6 +60,8 @@ class TaskList {
 	public static function fixName($name) {
 		$name = trim($name);
 		$name = strtoupper(substr($name, 0, 1)) . substr($name, 1);
+		$name = str_replace('#', '-', $name);
+		$name = str_replace('/', '-', $name);
 		return $name;
 	}
 
