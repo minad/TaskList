@@ -170,15 +170,15 @@ class TaskList {
 		if (empty($projects))
 			return '<p>' . wfMsg('tlNoProjects') . '</p>';
 
-		$text .= '<table class="tlProjects">';
+		$text .= '<table class="tlOverview">';
 
 		foreach ($projects as $projectName => $tasks) {
 			$projectUrl = Title::makeTitle(NS_TASKS, $projectName)->getLocalUrl();
 
 			$text .= '<tr class="tlProject tlPriority'.self::projectPriority($tasks).
-				'"><th class="tlPriority"></th><th colspan="8"><span class="tlTitle"><a href="'.
+				'"><td class="tlPriority"></th><th colspan="8"><span class="tlTitle"><a href="'.
 				$projectUrl.'">'.htmlspecialchars($projectName).'</a></span> <span class="tlCount">'.
-				count($tasks).' '.wfMsg('tlTask/s').'</span></th></tr>';
+				count($tasks).' '.wfMsg('tlTask/s').'</span></td></tr>';
 		}
 
 		$text .= '</table>';

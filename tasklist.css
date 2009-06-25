@@ -1,4 +1,4 @@
-.tlTasks, .tlProjects {
+.tlTasks, .tlProjects, .tlOverview {
   border-top: 1px solid;
   border-spacing: 0;
   border-collapse: collapse;
@@ -7,7 +7,8 @@
 }
 
 .tlTasks td, .tlTasks th,
-.tlProjects td, .tlProjects th {
+.tlProjects td, .tlProjects th,
+.tlOverview td {
   border: 1px solid #8898BF;
   padding: 0.1em;
 }
@@ -16,6 +17,10 @@
   background: #EEE;
   font-weight: bold;
   font-size: 10pt;
+}
+
+.tlOverview td {
+  background: #EEE;
 }
 
 .tlProgress {
@@ -30,8 +35,12 @@
   text-align: left;
 }
 
-.tlTitle {
+.tlProjects .tlTitle {
   font-size: 12pt;
+  float: left;
+}
+
+.tlOverview .tlTitle {
   float: left;
 }
 
@@ -69,10 +78,14 @@
   padding: 0;
 }
 
-.tlPriority, .tlPriority {
+.tlPriority {
   width: 6em;
   text-align: center;
   white-space: nowrap;
+}
+
+.tlOverview .tlPriority {
+  width: 1em;
 }
 
 .tlActions {
