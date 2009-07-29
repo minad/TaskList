@@ -19,23 +19,53 @@ function taskListCollapse(element) {
 
 taskListLast = null;
 
-function taskListToggle() {
-    taskListCollapse(this);
-    if (taskListLast && taskListLast != this)
+function taskListToggle(element) {
+    taskListCollapse(element);
+    if (taskListLast && taskListLast != element)
 	taskListCollapse(taskListLast);
-    taskListLast = this.collapsed ? null : this;
+    taskListLast = element.collapsed ? null : element;
+    if (element.collapsed)
+	location.href = '#none';
+    else
+	location.href = element.hash;
 }
 
 function taskListInit() {
-    element = document.getElementById('tlProjects');
-    children = element.getElementsByTagName('tr');
-    for (i = 0; i < children.length; ++i) {
-	child = children[i];
-	if (child.getAttribute('class').indexOf('tlProject') != -1) {
-	    child.collapsed = true;
-	    child.onclick = taskListToggle;
-	} else
-	    child.style.display = 'none';
+    index = 0;
+    openElement = null;
+    elements = document.getElementsByClassName('tlProjects');
+    for (j = 0; j < elements.length; ++j) {
+	element = elements[j];
+
+	children = element.getElementsByTagName('tr');
+	for (i = 0; i < children.length; ++i) {
+	    child = children[i];
+
+	    if (child.getAttribute('class').indexOf('tlProject') != -1) {
+		child.hash = '#' + index;
+		child.collapsed = true;
+		child.onclick = function() { taskListToggle(this); };
+
+		child.onselectstart = function() {return false;}
+		child.unselectable = 'on';
+		child.style.MozUserSelect = 'none';
+
+		if (location.hash == child.hash)
+		    openElement = child;
+		++index;
+	    } else
+		child.style.display = 'none';
+	}
+    }
+    if (openElement)
+	taskListToggle(openElement);
+
+    elements = document.getElementsByClassName('tlFilter');
+    for (i = 0; i < elements.length; ++i) {
+	elements[i].onchange = function() {
+	    this.form.action = location.hash;
+	    this.form.submit();
+	};
     }
 }
 

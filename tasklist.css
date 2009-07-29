@@ -14,18 +14,19 @@
 }
 
 .tlTasks th, .tlProjects th {
-  background: #EEE;
+  /* background: #EEE;*/
+  background: #DDD;
   font-weight: bold;
   font-size: 10pt;
 }
 
 .tlOverview td {
-  background: #EEE;
+  background: #DDD;
 }
 
 .tlProgress {
-  border: 1px solid #000;
-  background: #F00;
+  border: 1px solid #999;
+  background: #F88;
   text-align: center;
   padding: 0 1px;
 }
@@ -36,7 +37,7 @@
 }
 
 .tlProjects .tlTitle {
-  font-size: 12pt;
+  font-size: 11pt;
   float: left;
 }
 
@@ -79,7 +80,7 @@
 }
 
 .tlPriority {
-  width: 6em;
+  width: 2em;
   text-align: center;
   white-space: nowrap;
 }
@@ -117,22 +118,6 @@
   background: #FFFF99 !important;
 }
 
-.tlPriority4 .tlPriority {
-  background: #336699 !important;
-}
-
-.tlPriority4:hover {
-  background: #AAAAFF !important;
-}
-
-.tlPriority5 .tlPriority {
-  background: #009900 !important;
-}
-
-.tlPriority5:hover {
-  background: #99FF99 !important;
-}
-
 .tlPriority100 .tlPriority {
   background: #00FF00 !important;
 }
@@ -142,11 +127,13 @@
   margin: 0;
   display: block;
   clear: both;
+  width: 100%;
+  height: 2em;
+  margin: 1em 0;
 }
 
 .tlMenu li {
   float: left;
-  border: 1px solid #8898BF;
   margin: 0 0.5em 0.5em 0;
 }
 
@@ -159,6 +146,7 @@
   color: #000;
   text-decoration: none;
   font-weight: bold;
+  border: 1px solid #8898BF;
 }
 
 .tlMenu a:active,
