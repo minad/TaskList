@@ -101,10 +101,10 @@ class TaskList {
 	private static function filterTasks($tasks) {
 		global $wgRequest;
 		$stateFilter = $wgRequest->getText('tlStateFilter', 'all');
-		$prioFilter = $wgRequest->getInt('tlPrioFilter', 100);
+		$prioFilter = $wgRequest->getInt('tlPrioFilter', 0);
 		$result = array();
 		foreach ($tasks as $task) {
-			if ($task['priority'] > $prioFilter)
+			if ($prioFilter > 0 && $task['priority'] > $prioFilter)
 				continue;
 
 			if ($stateFilter == 'assigned' && !$task['user'])
@@ -178,7 +178,7 @@ class TaskList {
 		$newProjectUrl = Title::makeTitle(NS_SPECIAL, wfMsg('newproject'))->getLocalUrl();
 
 		$stateFilter = $wgRequest->getText('tlStateFilter', 'all');
-		$prioFilter = $wgRequest->getInt('tlPrioFilter', 100);
+		$prioFilter = $wgRequest->getInt('tlPrioFilter', 0);
 		$text = '<form action="'. $wgTitle->escapeLocalURL().
 			'"><ul class="tlMenu"><li><a href="'.$newProjectUrl.'">'.wfMsg('newproject').
 			'</a></li><li><select name="tlStateFilter" class="tlFilter">'.
@@ -186,7 +186,8 @@ class TaskList {
 			self::option('assigned', wfMsg('tlAssigned'), $stateFilter).
 			self::option('unassigned', wfMsg('tlUnassigned'), $stateFilter).
 			'</select></li><li><select name="tlPrioFilter" class="tlFilter">'.
-			self::optionList(1, 3, 1, $prioFilter, '', wfMsg('tlMaxPriority') . ' ').
+			self::option(0, wfMsg('tlNoFilter'), $stateFilter).
+			self::optionList(1, 3, 1, $prioFilter, '', wfMsg('tlToPriority') . ' ').
 			'</select></li></ul></form>';
 
 		if (empty($categories)) {

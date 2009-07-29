@@ -10,7 +10,7 @@ $messages['en'] = array(
 	'tlName'          => 'Name',
 	'tlProject'       => 'Project',
 	'tlPriority'      => 'Priority',
-	'tlMaxPriority'   => 'Maximum Priority',
+	'tlToPriority'    => 'To Priority',
 	'tlPrio'          => 'Prio.',
 	'tlUser'          => 'User',
 	'tlDescription'   => 'Description',
@@ -24,6 +24,7 @@ $messages['en'] = array(
 	'tlAll'           => 'All Tasks',
 	'tlUnassigned'    => 'Unassigned Tasks',
 	'tlAssigned'      => 'Assigned Tasks',
+	'tlNoFilter'      => 'No Filtering',
 );
 
 $messages['de'] = array(
@@ -33,7 +34,7 @@ $messages['de'] = array(
 	'tlName'          => 'Name',
 	'tlProject'       => 'Projekt',
 	'tlPriority'      => 'Priorität',
-	'tlMaxPriority'   => 'Maximale Priorität',
+	'tlToPriority'    => 'Bis Priorität',
 	'tlPrio'          => 'Prio.',
 	'tlUser'          => 'Verantwortlicher',
 	'tlDescription'   => 'Beschreibung',
@@ -47,4 +48,5 @@ $messages['de'] = array(
 	'tlAll'           => 'Alle Aufgaben',
 	'tlUnassigned'    => 'Unzugewiesene Aufgaben',
 	'tlAssigned'      => 'Zugewiesene Aufgaben',
+	'tlNoFilter'      => 'Keine Filterung',
 );
