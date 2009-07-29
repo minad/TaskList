@@ -173,7 +173,7 @@ class TaskList {
 	private static function allTasks() {
 		global $wgTitle, $wgRequest;
 
-		$projects = self::getProjects();
+		$categories = self::getProjects();
 
 		$newProjectUrl = Title::makeTitle(NS_SPECIAL, wfMsg('newproject'))->getLocalUrl();
 
@@ -189,20 +189,20 @@ class TaskList {
 			self::optionList(1, 3, 1, $prioFilter, '', wfMsg('tlMaxPriority') . ' ').
 			'</select></li></ul></form>';
 
-		if (empty($projects)) {
+		if (empty($categories)) {
 			$text .= '<p>' . wfMsg('tlNoProjects') . '</p>';
 			return $text;
 		}
 
-		$categories = array_keys($projects);
-		sort($categories);
+		$catNames = array_keys($categories);
+		sort($catNames);
 
-		foreach ($categories as $catName) {
-			$project = $projects[$catName];
+		foreach ($catNames as $catName) {
+			$projects = $categories[$catName];
 
 			$text .= '<h2>'.$catName.'</h2><table class="tlProjects">';
 
-			foreach ($project as $projectName => $tasks) {
+			foreach ($projects as $projectName => $tasks) {
 				$projectUrl = Title::makeTitle(NS_TASKS, $projectName)->getLocalUrl();
 
 				$newTaskUrl = Title::makeTitle(NS_SPECIAL, wfMsg('newtask').'/'.$projectName)->getLocalUrl();
@@ -230,23 +230,30 @@ class TaskList {
 	}
 
 	public static function projectOverview() {
-		$projects = self::getProjects();
+		$categories = self::getProjects();
 
-		if (empty($projects))
+		if (empty($categories))
 			return '<p>' . wfMsg('tlNoProjects') . '</p>';
 
-		$text .= '<table class="tlOverview">';
+		$catNames = array_keys($categories);
+		sort($catNames);
 
-		foreach ($projects as $projectName => $tasks) {
-			$projectUrl = Title::makeTitle(NS_TASKS, $projectName)->getLocalUrl();
+		foreach ($catNames as $catName) {
+			$projects = $categories[$catName];
 
-			$text .= '<tr class="tlProject tlPriority'.self::projectPriority($tasks).
-				'"><td class="tlPriority"></td><td colspan="8"><span class="tlTitle"><a href="'.
-				$projectUrl.'">'.htmlspecialchars($projectName).'</a></span> <span class="tlCount">'.
-				count($tasks).' '.wfMsg('tlTask/s').'</span></td></tr>';
+			$text .= '<h3>'.$catName.'</h3><table class="tlOverview">';
+
+			foreach ($projects as $projectName => $tasks) {
+				$projectUrl = Title::makeTitle(NS_TASKS, $projectName)->getLocalUrl();
+
+				$text .= '<tr class="tlProject tlPriority'.self::projectPriority($tasks).
+					'"><td class="tlPriority"></td><td colspan="8"><span class="tlTitle"><a href="'.
+					$projectUrl.'">'.htmlspecialchars($projectName).'</a></span> <span class="tlCount">'.
+					count($tasks).' '.wfMsg('tlTask/s').'</span></td></tr>';
+			}
+
+			$text .= '</table>';
 		}
-
-		$text .= '</table>';
 
 		return $text;
 	}
