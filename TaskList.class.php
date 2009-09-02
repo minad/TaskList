@@ -456,7 +456,7 @@ class NewTask extends SpecialPage {
 					htmlspecialchars($project).'"/></td></tr><tr><td><label for="tlName">'.wfMsg('tlName').
 					':</label></td><td><input id="tlName" name="tlName" type="text" size="20" value="'.
 					htmlspecialchars($name).'"/></td></tr><tr><td><label for="tlPriority">'.wfMsg('tlPriority').':</label></td><td>'.
-					'<select id="tlPriority" name="tlPriority" size="1">'.TaskList::optionList(1,5,1,0).'</select></td></tr><tr><td><label for="tlUser">'.
+					'<select id="tlPriority" name="tlPriority" size="1">'.TaskList::optionList(1,3,1,0).'</select></td></tr><tr><td><label for="tlUser">'.
 					wfMsg('tlUser').
 					':</label></td><td><input id="tlUser" name="tlUser" type="text" size="20"/></td></tr>'.
 					'<tr><td><label for="tlDate">'.wfMsg('tlDate').
