@@ -70,7 +70,8 @@ class TaskList {
 		$fields = array();
 		foreach ($matches as $match) {
 			$x = preg_split('/=/', $match);
-			$fields[trim(strtolower($x[0]))] = trim($x[1]);
+			if (count($x) == 2)
+			    $fields[trim(strtolower($x[0]))] = trim($x[1]);
 		}
 		return array('name'        => $name,
 			     'priority'    => intval($fields['priority']),
@@ -238,7 +239,7 @@ class TaskList {
 
 		$catNames = array_keys($categories);
 		sort($catNames);
-
+		$text = '';
 		foreach ($catNames as $catName) {
 			$projects = $categories[$catName];
 
