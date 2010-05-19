@@ -72,13 +72,13 @@ class TaskList {
 			$x = preg_split('/=/', $match);
 			$fields[trim(strtolower($x[0]))] = trim($x[1]);
 		}
-		return array(name        => $name,
-			     priority    => intval($fields['priority']),
-			     user        => self::fixName($fields['user']),
-			     description => $fields['description'],
-			     date        => $fields['date'],
-			     status      => $fields['status'],
-			     progress    => intval($fields['progress'])
+		return array('name'        => $name,
+			     'priority'    => intval($fields['priority']),
+			     'user'        => self::fixName($fields['user']),
+			     'description' => $fields['description'],
+			     'date'        => $fields['date'],
+			     'status'      => $fields['status'],
+			     'progress'    => intval($fields['progress'])
 			     );
 	}
 
@@ -323,12 +323,12 @@ class TaskList {
 		if ($title->getNamespace() == NS_TASKS && $title->isSubpage()) {
 			$task = null;
 			if ($wgRequest->wasPosted()) {
-				$task = array(priority    => intval($wgRequest->getText('tlPriority')),
-					      user        => self::fixName($wgRequest->getText('tlUser')),
-					      description => $wgRequest->getText('tlDescription'),
-					      date        => $wgRequest->getText('tlDate'),
-					      status      => $wgRequest->getText('tlStatus'),
-					      progress    => intval($wgRequest->getText('tlProgress')));
+				$task = array('priority'    => intval($wgRequest->getText('tlPriority')),
+					      'user'        => self::fixName($wgRequest->getText('tlUser')),
+					      'description' => $wgRequest->getText('tlDescription'),
+					      'date'        => $wgRequest->getText('tlDate'),
+					      'status'      => $wgRequest->getText('tlStatus'),
+					      'progress'    => intval($wgRequest->getText('tlProgress')));
 			} elseif ($article->exists()) {
 				$task = self::parseTask(null, $article->getContent());
 			}
@@ -437,12 +437,12 @@ class NewTask extends SpecialPage {
 
 		if ($wgRequest->wasPosted() && $project && $name &&
 		    $title = Title::makeTitleSafe(NS_TASKS, TaskList::fixName($project) . '/' . TaskList::fixName($name))) {
-			$task = array(priority    => intval($wgRequest->getText('tlPriority')),
-				      user        => TaskList::fixName($wgRequest->getText('tlUser')),
-				      description => $wgRequest->getText('tlDescription'),
-				      date        => $wgRequest->getText('tlDate'),
-				      status      => $wgRequest->getText('tlStatus'),
-				      progress    => intval($wgRequest->getText('tlProgress')));
+			$task = array('priority'    => intval($wgRequest->getText('tlPriority')),
+				      'user'        => TaskList::fixName($wgRequest->getText('tlUser')),
+				      'description' => $wgRequest->getText('tlDescription'),
+				      'date'        => $wgRequest->getText('tlDate'),
+				      'status'      => $wgRequest->getText('tlStatus'),
+				      'progress'    => intval($wgRequest->getText('tlProgress')));
 			$article = new Article($title);
 			$article->insertNewArticle(TaskList::formatTask($task), '', false, false, false, '');
 		} else {
