@@ -214,7 +214,7 @@ class TaskList {
 				$text .= '<tr class="tlProject tlPriority'.$priority.
 					'"><th class="tlPriority"></th><th colspan="8"><span class="tlTitle"><a href="'.$projectUrl.'">'.
 					htmlspecialchars($projectName).'</a></span> <span class="tlCount">'. count($tasks).' '.
-					wfMsg('tlTask/s').'</span></th></tr>'.self::taskHeader($newTaskUrl);
+					wfMsg(count($tasks) == 1 ? 'tlTask' : 'tlTasks').'</span></th></tr>'.self::taskHeader($newTaskUrl);
 
 				if (empty($tasks)) {
 					$text .= '<tr class="tlTask"><td colspan="8">'.wfMsg('tlNoTasks').'</td></tr>';
@@ -251,7 +251,7 @@ class TaskList {
 				$text .= '<tr class="tlProject tlPriority'.self::projectPriority($tasks).
 					'"><td class="tlPriority"></td><td colspan="8"><span class="tlTitle"><a href="'.
 					$projectUrl.'">'.htmlspecialchars($projectName).'</a></span> <span class="tlCount">'.
-					count($tasks).' '.wfMsg('tlTask/s').'</span></td></tr>';
+					count($tasks).' '.wfMsg(count($tasks) == 1 ? 'tlTask' : 'tlTasks').'</span></td></tr>';
 			}
 
 			$text .= '</table>';
