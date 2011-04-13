@@ -1,6 +1,6 @@
 function taskListCollapse(element) {
-    collapsed = element.collapsed = !element.collapsed;
-    clazz = element.getAttribute('class');
+    var collapsed = element.collapsed = !element.collapsed;
+    var clazz = element.getAttribute('class');
     if (collapsed)
 	clazz = clazz.replace(/\s*tlSelected\s*/, '');
     else
@@ -17,29 +17,26 @@ function taskListCollapse(element) {
     }
 }
 
-taskListLast = null;
+var taskListLast = null;
 
 function taskListToggle(element) {
     taskListCollapse(element);
     if (taskListLast && taskListLast != element)
 	taskListCollapse(taskListLast);
     taskListLast = element.collapsed ? null : element;
-    if (element.collapsed)
-	location.href = '#none';
-    else
-	location.href = element.hash;
+    location.href = element.collapsed ? '#none' : element.hash;
 }
 
 function taskListInit() {
-    index = 0;
-    openElement = null;
-    elements = document.getElementsByClassName('tlProjects');
-    for (j = 0; j < elements.length; ++j) {
-	element = elements[j];
+    var index = 0;
+    var openElement = null;
+    var elements = document.getElementsByClassName('tlProjects');
+    for (var j = 0; j < elements.length; ++j) {
+	var element = elements[j];
 
-	children = element.getElementsByTagName('tr');
-	for (i = 0; i < children.length; ++i) {
-	    child = children[i];
+	var children = element.getElementsByTagName('tr');
+	for (var i = 0; i < children.length; ++i) {
+	    var child = children[i];
 
 	    if (child.getAttribute('class').indexOf('tlProject') != -1) {
 		child.hash = '#' + index;
@@ -53,15 +50,16 @@ function taskListInit() {
 		if (location.hash == child.hash)
 		    openElement = child;
 		++index;
-	    } else
+	    } else {
 		child.style.display = 'none';
+	    }
 	}
     }
     if (openElement)
 	taskListToggle(openElement);
 
     elements = document.getElementsByClassName('tlFilter');
-    for (i = 0; i < elements.length; ++i) {
+    for (var i = 0; i < elements.length; ++i) {
 	elements[i].onchange = function() {
 	    this.form.action = location.hash;
 	    this.form.submit();
