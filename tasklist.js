@@ -28,7 +28,7 @@
 	    collapse(currentOpenElement);
 	}
 	currentOpenElement = this.collapsed ? null : this;
-	location.href = this.collapsed ? '#none' : this.hash;
+	location.href = this.collapsed ? '#' : this.hash;
     }
 
     function submitElement() {
