@@ -141,15 +141,10 @@ class TaskList {
 		$deleteURL = $title->getLocalUrl('action=delete');
 		$editURL = $title->getLocalUrl('action=edit');
 
-		$user = '';
-		if ($task['user']) {
-			$userUrl = Title::makeTitle(NS_USER, $task['user'])->getLocalUrl();
-			$user = '<a href="'.$userUrl.'">'.htmlspecialchars($task['user']).'</a>';
-		}
-
 		return '<tr class="tlTask tlPriority'.$task['priority'].'"><td class="tlPriority">'.$task['priority'].
 			'</td><td><a href="'.$url.'">'.htmlspecialchars($task['name']).'</a></td><td>'.
-			htmlspecialchars($task['date']).'</td><td>'.$user.'</td><td>'.htmlspecialchars(self::truncate($task['status'])).
+			htmlspecialchars($task['date']).'</td><td>'.htmlspecialchars($task['user']).'</td><td>'.
+			htmlspecialchars(self::truncate($task['status'])).
 			'</td><td><div class="tlProgress" style="width: '.$task['progress'].
 			'%">'.$task['progress'].'%</div></td><td class="tlActions"><a href="'.$deleteURL.'">'.
 			self::img('delete').'</a><a href="'.$editURL.'">'.self::img('edit').'</a></td></tr>';
