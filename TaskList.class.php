@@ -137,9 +137,9 @@ class TaskList {
 
 	private static function taskRow($projectName, $task) {
 		$title = Title::makeTitle(NS_TASKS, $projectName.'/'.$task['name']);
-		$url = $title->getLocalUrl();
-		$deleteURL = $title->getLocalUrl('action=delete');
-		$editURL = $title->getLocalUrl('action=edit');
+		$url = $title->escapeLocalUrl();
+		$deleteURL = $title->escapeLocalUrl(array('action' => 'delete', 'wpReason' => wfMsg('tlTaskDone')));
+		$editURL = $title->escapeLocalUrl('action=edit');
 
 		return '<tr class="tlTask tlPriority'.$task['priority'].'"><td class="tlPriority">'.$task['priority'].
 			'</td><td><a href="'.$url.'">'.htmlspecialchars($task['name']).'</a></td><td>'.
@@ -171,7 +171,7 @@ class TaskList {
 
 		$categories = self::getProjects();
 
-		$newProjectUrl = Title::makeTitle(NS_SPECIAL, wfMsg('newproject'))->getLocalUrl();
+		$newProjectUrl = Title::makeTitle(NS_SPECIAL, wfMsg('newproject'))->escapeLocalUrl();
 
 		$stateFilter = $wgRequest->getText('tlStateFilter', 'all');
 		$prioFilter = $wgRequest->getInt('tlPrioFilter', 0);
@@ -200,9 +200,9 @@ class TaskList {
 			$text .= '<h2>'.$catName.'</h2><table class="tlProjects">';
 
 			foreach ($projects as $projectName => $tasks) {
-				$projectUrl = Title::makeTitle(NS_TASKS, $projectName)->getLocalUrl();
+				$projectUrl = Title::makeTitle(NS_TASKS, $projectName)->escapeLocalUrl();
 
-				$newTaskUrl = Title::makeTitle(NS_SPECIAL, wfMsg('newtask').'/'.$projectName)->getLocalUrl();
+				$newTaskUrl = Title::makeTitle(NS_SPECIAL, wfMsg('newtask').'/'.$projectName)->escapeLocalUrl();
 				$priority = self::projectPriority($tasks);
 				$tasks = self::filterTasks($tasks);
 
@@ -241,7 +241,7 @@ class TaskList {
 			$text .= '<h3>'.$catName.'</h3><table class="tlOverview">';
 
 			foreach ($projects as $projectName => $tasks) {
-				$projectUrl = Title::makeTitle(NS_TASKS, $projectName)->getLocalUrl();
+				$projectUrl = Title::makeTitle(NS_TASKS, $projectName)->escapeLocalUrl();
 
 				$text .= '<tr class="tlProject tlPriority'.self::projectPriority($tasks).
 					'"><td class="tlPriority"></td><td colspan="8"><span class="tlTitle"><a href="'.
@@ -260,8 +260,8 @@ class TaskList {
 		$projectName = $wgTitle->getText();
 		$tasks = self::getTasks($wgTitle);
 
-		$overviewUrl = Title::makeTitle(NS_TASKS, wfMsg('tlOverview'))->getLocalUrl();
-		$newTaskUrl = Title::makeTitle(NS_SPECIAL, wfMsg('newtask').'/'.$projectName)->getLocalUrl();
+		$overviewUrl = Title::makeTitle(NS_TASKS, wfMsg('tlOverview'))->escapeLocalUrl();
+		$newTaskUrl = Title::makeTitle(NS_SPECIAL, wfMsg('newtask').'/'.$projectName)->escapeLocalUrl();
 
 		$text = '<ul class="tlMenu"><li><a href="'.$overviewUrl.'">'.wfMsg('tlOverview').
 			'</a></li><li><a href="'.$newTaskUrl.'">'.wfMsg('newtask').
@@ -351,7 +351,7 @@ class TaskList {
 					}
 				}
 
-				$wgOut->addHTML('<form class="tlForm" method="post" action="' . $title->escapeLocalURL("action=submit") .
+				$wgOut->addHTML('<form class="tlForm" method="post" action="' . $title->escapeLocalURL('action=submit') .
 						'"><table><tr><td><label for="tlPriority">' .
 						wfMsg('tlPriority').':</label></td><td><select id="tlPriority" name="tlPriority" size="1">'.
 						self::optionList(1, 3, 1, $task['priority']).'</select></td></tr><tr><td><label for="tlUser">'
@@ -404,7 +404,7 @@ class NewProject extends SpecialPage {
 		} else {
 			$wgOut->setPageTitle(wfMsg('newproject'));
 
-			$overviewUrl = Title::makeTitle(NS_TASKS, wfMsg('tlOverview'))->getLocalUrl();
+			$overviewUrl = Title::makeTitle(NS_TASKS, wfMsg('tlOverview'))->escapeLocalUrl();
 
 			$wgOut->addHTML('<ul class="tlMenu"><li><a href="'.$overviewUrl.'">'.wfMsg('tlOverview').'</a></li></ul>'.
 					'<form class="tlForm" method="post" action="' . $this->getTitle()->escapeLocalURL() .
@@ -444,7 +444,7 @@ class NewTask extends SpecialPage {
 		} else {
 			$wgOut->setPageTitle(wfMsg('newtask'));
 
-			$overviewUrl = Title::makeTitle(NS_TASKS, wfMsg('tlOverview'))->getLocalUrl();
+			$overviewUrl = Title::makeTitle(NS_TASKS, wfMsg('tlOverview'))->escapeLocalUrl();
 
 			$wgOut->addHTML('<ul class="tlMenu"><li><a href="'.$overviewUrl.'">'.wfMsg('tlOverview').'</a></li></ul>'.
 					'<form class="tlForm" method="post" action="' . $this->getTitle()->escapeLocalURL() . '"><table><tr><td><label for="tlProject">'.
