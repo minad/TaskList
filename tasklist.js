@@ -30,8 +30,8 @@
 	    collapse(currentOpenElement);
 	}
 	currentOpenElement = this.collapsed ? null : this;
-	window.scrollTo(x, y);
 	location.href = this.collapsed ? '#' : this.hash;
+	window.scrollTo(x, y);
     }
 
     function submitElement() {
