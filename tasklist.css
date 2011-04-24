@@ -14,14 +14,13 @@
 }
 
 .tlTasks th, .tlProjects th {
-  /* background: #EEE;*/
   background: #DDD;
   font-weight: bold;
   font-size: 10pt;
 }
 
 .tlOverview td {
-  background: #DDD;
+  background: #D8E8FF;
 }
 
 .tlProgress {
