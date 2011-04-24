@@ -23,17 +23,12 @@
     var currentOpenElement = null;
 
     function toggle() {
-	var x = window.pageXOffset ? window.pageXOffset :
-		(document.body ? document.body.scrollLeft : document.documentElement.scrollLeft);
-	var y = window.pageYOffset ? window.pageYOffset :
-		(document.body ? document.body.scrollLeft : document.documentElement.scrollTop);
 	collapse(this);
 	if (currentOpenElement && currentOpenElement !== this) {
 	    collapse(currentOpenElement);
 	}
 	currentOpenElement = this.collapsed ? null : this;
-	location.href = this.collapsed ? '#' : this.hash;
-	window.scrollTo(x, y);
+	location.href = this.collapsed ? '#none' : this.hash;
     }
 
     function submitElement() {
