@@ -23,11 +23,14 @@
     var currentOpenElement = null;
 
     function toggle() {
+	var x = window.pageXOffset ? window.pageXOffset : document.body.scrollLeft;
+	var y = window.pageYOffset ? window.pageYOffset : document.body.scrollTop;
 	collapse(this);
 	if (currentOpenElement && currentOpenElement !== this) {
 	    collapse(currentOpenElement);
 	}
 	currentOpenElement = this.collapsed ? null : this;
+	window.scrollTo(x, y);
 	location.href = this.collapsed ? '#' : this.hash;
     }
 
