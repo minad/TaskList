@@ -23,8 +23,10 @@
     var currentOpenElement = null;
 
     function toggle() {
-	var x = window.pageXOffset ? window.pageXOffset : document.body.scrollLeft;
-	var y = window.pageYOffset ? window.pageYOffset : document.body.scrollTop;
+	var x = window.pageXOffset ? window.pageXOffset :
+		(document.body ? document.body.scrollLeft : document.documentElement.scrollLeft);
+	var y = window.pageYOffset ? window.pageYOffset :
+		(document.body ? document.body.scrollLeft : document.documentElement.scrollTop);
 	collapse(this);
 	if (currentOpenElement && currentOpenElement !== this) {
 	    collapse(currentOpenElement);
