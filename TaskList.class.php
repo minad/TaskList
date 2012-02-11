@@ -59,20 +59,23 @@ class TaskList {
 		return substr_replace($s, $ellipsis, $max - strlen($ellipsis));
 	}
 
-	public static function formatTask($task) {
-                foreach ($task as $key => $value)
-                        $task[$key] = preg_replace('/\|/g', '{{!}}', $value);
+	public static function formatTask($task, $title) {
+		global $wgParser, $wgUser;
+                foreach ($task as $key => $value) {
+			$value = $wgParser->preSaveTransform($value, $title, $wgUser, ParserOptions::newFromUser($wgUser));
+                        $task[$key] = str_replace('|', '{{!}}', $value);
+		}
 		return "{{Task\n|priority={$task['priority']}\n|user={$task['user']}\n|description={$task['description']}\n" .
 			"|date={$task['date']}\n|status={$task['status']}\n|progress={$task['progress']}}}";
 	}
 
 	private static function parseTask($name, $content) {
-		preg_match('/\{\{Task(.*?)\}\}/s', $content, $matches);
+		preg_match('/\{\{Task(.*)\}\}/s', $content, $matches);
 		$matches = preg_split('/\s*\|\s*/', $matches[1]);
 		$fields = array();
 		foreach ($matches as $match) {
 			$x = preg_split('/=/', $match, 2);
-                        $fields[trim(strtolower($x[0]))] = preg_replace('/\{\{!\}\}/g', '|', trim($x[1]));
+                        $fields[trim(strtolower($x[0]))] = str_replace('{{!}}', '|', trim($x[1]));
 		}
 		return array('name'        => $name,
 			     'priority'    => intval($fields['priority']),
@@ -330,7 +333,7 @@ class TaskList {
 				$task = self::parseTask(null, $article->getContent());
 			}
 
-			$editpage->textbox1 = self::formatTask($task);
+			$editpage->textbox1 = self::formatTask($task, $title);
 
 			$wgOut->setPageTitle(wfMsg( 'editing', $title->getPrefixedText() ) );
 
@@ -441,7 +444,7 @@ class NewTask extends SpecialPage {
 				      'status'      => $wgRequest->getText('tlStatus'),
 				      'progress'    => intval($wgRequest->getText('tlProgress')));
 			$article = new Article($title);
-			$article->insertNewArticle(TaskList::formatTask($task), '', false, false, false, '');
+			$article->insertNewArticle(TaskList::formatTask($task, $title), '', false, false, false, '');
 		} else {
 			$wgOut->setPageTitle(wfMsg('newtask'));
 
