@@ -60,6 +60,8 @@ class TaskList {
 	}
 
 	public static function formatTask($task) {
+                foreach ($task as $key => $value)
+                        $task[$key] = preg_replace('/\|/g', '{{!}}', $value);
 		return "{{Task\n|priority={$task['priority']}\n|user={$task['user']}\n|description={$task['description']}\n" .
 			"|date={$task['date']}\n|status={$task['status']}\n|progress={$task['progress']}}}";
 	}
@@ -69,9 +71,8 @@ class TaskList {
 		$matches = preg_split('/\s*\|\s*/', $matches[1]);
 		$fields = array();
 		foreach ($matches as $match) {
-			$x = preg_split('/=/', $match);
-			if (count($x) == 2)
-			    $fields[trim(strtolower($x[0]))] = trim($x[1]);
+			$x = preg_split('/=/', $match, 2);
+                        $fields[trim(strtolower($x[0]))] = preg_replace('/\{\{!\}\}/g', '|', trim($x[1]));
 		}
 		return array('name'        => $name,
 			     'priority'    => intval($fields['priority']),
