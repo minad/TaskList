@@ -75,7 +75,9 @@ class TaskList {
 		$fields = array();
 		foreach ($matches as $match) {
 			$x = preg_split('/=/', $match, 2);
-                        $fields[trim(strtolower($x[0]))] = str_replace('{{!}}', '|', trim($x[1]));
+			if(count($x) == 2) {
+				$fields[trim(strtolower($x[0]))] = str_replace('{{!}}', '|', trim($x[1]));
+			}
 		}
 		return array('name'        => $name,
 			     'priority'    => intval($fields['priority']),
@@ -314,7 +316,7 @@ class TaskList {
 		return $text;
 	}
 
-	public static function editHook(&$editpage) {
+	public static function editHook($editpage) {
 		global $wgRequest, $wgOut, $wgParser, $wgUser;
 
 		$title = $editpage->getArticle()->getTitle();
