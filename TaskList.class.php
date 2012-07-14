@@ -309,10 +309,10 @@ class TaskList {
 		return "<option value=\"$value\"".($value == $selected ? 'selected="selected"' : '').">$text</option>";
 	}
 
-	public static function optionList($min, $max, $step, $selected, $postfix = '', $prefix = '') {
+	public static function optionList($min, $max, $step, $selected, $suffix = '', $prefix = '') {
 		$text = '';
 		for ($i=$min; $i<=$max; $i += $step)
-			$text .= self::option($i, "$prefix$i$postfix", $selected);
+			$text .= self::option($i, "$prefix$i$suffix", $selected);
 		return $text;
 	}
 
