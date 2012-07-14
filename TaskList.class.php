@@ -341,6 +341,7 @@ class TaskList {
 
 			if ($wgRequest->getCheck('wpSave')) {
 				$article->doEdit( $editpage->textbox1, '');
+				$wgOut->addWikiText( self::formatTask($task, $title) );
 			} else {
 				if ($wgRequest->wasPosted()) {
 					if ($wgRequest->getCheck('wpDiff')) {
