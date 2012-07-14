@@ -340,10 +340,7 @@ class TaskList {
 			$wgOut->setPageTitle(wfMsg( 'editing', $title->getPrefixedText() ) );
 
 			if ($wgRequest->getCheck('wpSave')) {
-				if ($title->exists())
-					$article->updateArticle( $editpage->textbox1, '', false,  false, false, '' );
-				else
-					$article->insertNewArticle( $editpage->textbox1, '', false, false, false, '');
+				$article->doEdit( $editpage->textbox1, '');
 			} else {
 				if ($wgRequest->wasPosted()) {
 					if ($wgRequest->getCheck('wpDiff')) {
@@ -406,7 +403,7 @@ class NewProject extends SpecialPage {
 			trim($cat);
 			if (!empty($cat))
 				$text .= "\n[[". $wgContLang->getNSText(NS_CATEGORY) .":$cat]]\n";
-			$article->insertNewArticle($text, '', false, false, false, '');
+			$article->doEdit($text, '');
 		} else {
 			$wgOut->setPageTitle(wfMsg('newproject'));
 
@@ -446,7 +443,7 @@ class NewTask extends SpecialPage {
 				      'status'      => $wgRequest->getText('tlStatus'),
 				      'progress'    => intval($wgRequest->getText('tlProgress')));
 			$article = new Article($title);
-			$article->insertNewArticle(TaskList::formatTask($task, $title), '', false, false, false, '');
+			$article->doEdit(TaskList::formatTask($task, $title), '');
 		} else {
 			$wgOut->setPageTitle(wfMsg('newtask'));
 

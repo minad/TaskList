@@ -31,7 +31,9 @@ $wgNamespaceAliases['Aufgabe Diskussion'] = NS_TASKS_TALK;
 
 $wgSpecialPages['NewTask'] = 'NewTask';
 $wgSpecialPages['NewProject'] = 'NewProject';
-$wgExtensionAliasesFiles['MyExtension'] = $dir . 'TaskList.alias.php';
+$wgExtensionMessagesFiles['TaskListAlias'] = $dir . 'TaskList.alias.php';
+
+$wgSpecialPageGroups['TaskList'] = 'other';
 
 function efTaskList() {
 	global $wgHooks, $wgExtraNamespaces, $wgNamespaceAliases;
