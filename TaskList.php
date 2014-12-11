@@ -38,7 +38,7 @@ $wgSpecialPageGroups['TaskList'] = 'other';
 function efTaskList() {
 	global $wgHooks, $wgExtraNamespaces, $wgNamespaceAliases;
 
-	wfLoadExtensionMessages('TaskList');
+	//wfLoadExtensionMessages('TaskList');
 
 	$wgHooks['ParserFirstCallInit'][] = 'TaskList::init';
 	$wgHooks['BeforePageDisplay'][] = 'TaskList::headerHook';
